@@ -57,5 +57,15 @@ public class LinkedList<T> {
             current = current.next ;
         }
     }
+
+    public int size(){
+        int count = 0 ;
+        Node<T> tmp = head ;
+        while(tmp != null){
+            count++ ;
+            tmp = tmp.next ;
+        }
+        return count ;
+    }
     
 }

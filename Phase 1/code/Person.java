@@ -6,7 +6,7 @@ public abstract class Person implements IPerson   {
     public Person(int id, String name, String phoneNumber ) {
         this.id = id;
         this.name = name;
-        this.phoneNumber = phoneNumber;
+        setPhoneNumber(phoneNumber);
         
     }
     public int getId(){
