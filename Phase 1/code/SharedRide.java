@@ -1,10 +1,32 @@
-public class SharedRide extends Ride implements ISharedRide{
+public class SharedRide extends Ride implements ISharedRide {
     private LinkedList<IRider> participants;
+
+    public SharedRide(IDateTime pickupDateTime, IDateTime dropoffDateTime, String pickupLocation,
+            String dropoffLocation, IDriver driver) {
+        super(pickupDateTime, dropoffDateTime, pickupLocation, dropoffLocation, driver);
+
+        participants = new LinkedList<IRider>();
+    }
 
     @Override
     public boolean hasRider(int riderId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hasRider'");
+        if (participants.empty()) {
+            return false;
+        }
+
+        participants.findfirst();
+        while (!participants.last()) {
+            if (participants.retrieve().getId() == riderId) {
+                return true;
+            }
+            participants.findnext();
+        }
+
+        if (participants.retrieve().getId() == riderId) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -14,20 +36,45 @@ public class SharedRide extends Ride implements ISharedRide{
 
     @Override
     public boolean addParticipant(IRider rider) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addParticipant'");
+        if (rider == null || hasRider(rider.getId())) {
+            return false;
+        }
+
+        participants.insert(rider);
+        return true;
     }
 
     @Override
     public boolean removeParticipantById(int riderId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeParticipantById'");
+        if (participants.empty()) {
+            return false;
+        }
+
+        participants.findfirst();
+        while (!participants.last()) {
+            if (participants.retrieve().getId() == riderId) {
+                participants.remove();
+                return true;
+            }
+            participants.findnext();
+        }
+
+        if (participants.retrieve().getId() == riderId) {
+            participants.remove();
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
+        return participants.empty();
     }
-     
+
+    @Override
+    public String toString() {
+        return String.format("SharedRide [%d] ", participants.size()) + super.toString();
+    }
+
 }
