@@ -29,9 +29,40 @@ public class SharedRide extends Ride implements ISharedRide {
         return false;
     }
 
+    public boolean hasRiderByFullName(String riderFullName) {
+        if (participants.empty()){
+            return false;
+        }
+
+        participants.findfirst();
+        while (!participants.last()) {
+            if (participants.retrieve().getName().equals(riderFullName)) {
+                return true;
+            }
+            participants.findnext();
+        }
+
+        if (participants.retrieve().getName().equals(riderFullName)) {
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public LinkedList<IRider> getParticipants() {
-        return participants;
+        if (participants.empty()) {
+            return null;
+        }
+        
+        LinkedList<IRider> result = new LinkedList<IRider>();
+        participants.findfirst();
+        while (!participants.last()) {
+            result.insert(participants.retrieve());
+            participants.findnext();
+        }
+        result.insert(participants.retrieve());
+        return result;
     }
 
     @Override

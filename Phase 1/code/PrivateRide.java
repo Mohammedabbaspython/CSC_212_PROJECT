@@ -23,6 +23,14 @@ public class PrivateRide extends Ride implements IPrivateRide {
         return  riderId == rider.getId();
     }
 
+    public boolean hasRiderByFullName(String riderFullName) {
+        if (rider == null){
+            return false;
+        }
+
+        return rider.getName().equals(riderFullName);
+    }
+
     @Override
     public String toString() {
         return "PrivateRide " + super.toString();

@@ -7,9 +7,7 @@ public abstract class Ride implements IRide {
 
     protected IDriver driver;
 
-
     protected int rideId;
-
 
     protected static int rideCount;
 
@@ -40,7 +38,7 @@ public abstract class Ride implements IRide {
     public String getDropoffLocation() {
         return dropoffLocation;
     }
-    
+
     public IDriver getDriver() {
         return driver;
     }
@@ -62,6 +60,8 @@ public abstract class Ride implements IRide {
         this.driver = driver;
     }
 
+    abstract public boolean hasRiderByFullName(String riderFullName);
+    
     // toString()
     @Override
     public String toString() {
