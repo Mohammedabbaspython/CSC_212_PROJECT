@@ -1,4 +1,25 @@
 public class RideSharingSystem implements IRideSharingSystem {
+        private RiderList riders = new RiderList() ;
+    
+
+    public boolean addRider(IRider rider){
+        return riders.add(rider) ;
+    }
+    public IRider searchRiderById(int riderId){
+        return riders.findById(riderId) ;
+    }
+    public IRider searchRiderByEmail(String Email){
+        return riders.findByEmail(Email) ;
+    }
+    public LinkedList<IRider> searchRidersByName(String fullName){
+        return riders.findByName(fullName) ;
+    }
+    public LinkedList<IRider> searchRidersByHomeCity(String homeCity){
+        return riders.findByHomeCity(homeCity) ;
+    }
+    public LinkedList<IRider> getAllRiders(){
+        return riders.getAll() ;
+    }
 
     @Override
     public boolean loadRidersFromCSV(String ridersFilePath) {
@@ -18,47 +39,6 @@ public class RideSharingSystem implements IRideSharingSystem {
         throw new UnsupportedOperationException("Unimplemented method 'loadRidesFromCSV'");
     }
 
-    @Override
-    public boolean addRider(IRider rider) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addRider'");
-    }
-
-    @Override
-    public boolean addDriver(IDriver driver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addDriver'");
-    }
-
-    @Override
-    public IRider searchRiderById(int riderId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchRiderById'");
-    }
-
-    @Override
-    public IRider searchRiderByEmail(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchRiderByEmail'");
-    }
-
-    @Override
-    public LinkedList<IRider> searchRidersByName(String fullName) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchRidersByName'");
-    }
-
-    @Override
-    public LinkedList<IRider> searchRidersByHomeCity(String homeCity) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchRidersByHomeCity'");
-    }
-
-    @Override
-    public LinkedList<IRider> getAllRiders() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllRiders'");
-    }
 
     @Override
     public IDriver searchDriverById(int driverId) {
@@ -133,5 +113,6 @@ public class RideSharingSystem implements IRideSharingSystem {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getAllRidesAlphabetically'");
     }
-    
 }
+
+

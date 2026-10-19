@@ -27,5 +27,8 @@ public class Rider extends Person implements IRider {
         }
         return 0; 
     }
+    public String toString(){
+        return super.toString() +   ", Email: " + getEmail() +", Home City: " + getHomeCity() ;
+    }
     
 }

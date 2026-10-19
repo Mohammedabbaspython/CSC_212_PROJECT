@@ -114,7 +114,18 @@ public class RiderList implements IRiderList {
     }
 
     public LinkedList<IRider> getAll() {
-        return riders;
+        LinkedList<IRider> result = new LinkedList<IRider>();
+        if (riders.empty()) {
+            return result;
+        }
+        riders.findfirst();
+        while (!riders.last()) {
+            result.insert(riders.retrieve());
+            riders.findnext();
+        }
+        result.insert(riders.retrieve());
+        return result;
+
     }
 
     public boolean removeById(int riderId) {
