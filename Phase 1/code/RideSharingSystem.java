@@ -47,10 +47,8 @@ public class RideSharingSystem implements IRideSharingSystem {
     // later
     @Override
     public boolean loadRidersFromCSV(String ridersFilePath) {
-        String filePath = "riders_100.csv";
-
         try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            BufferedReader br = new BufferedReader(new FileReader(ridersFilePath));
 
             String line = br.readLine();
 
@@ -71,10 +69,8 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public boolean loadDriversFromCSV(String driversFilePath) {
-        String filePath = "riders_100.csv";
-
         try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            BufferedReader br = new BufferedReader(new FileReader(driversFilePath));
 
             String line = br.readLine();
 
@@ -96,17 +92,22 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public boolean loadRidesFromCSV(String ridesFilePath) {
-        String filePath = "riders_100.csv";
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            BufferedReader br = new BufferedReader(new FileReader(ridesFilePath));
 
             String line = br.readLine();
+            IDateTime pickupDateTime, dropoffDateTime;
 
             while (line != null) {
                 String[] data = line.split(",");
 
                 IRide ride;
+
+                pickupDateTime = new DateTime(data[2]);
+                dropoffDateTime = new DateTime(data[3]);
+
+                int driverId = Integer.parseInt(data[5]);
 
                 if (data[0].equals("SHARED")) {
                     String[] ridersIdsRow = data[6].split(";");
@@ -115,12 +116,11 @@ public class RideSharingSystem implements IRideSharingSystem {
                         ridersIds[i] = Integer.parseInt(ridersIdsRow[i]);
                     }
 
-                    scheduleSharedRide(data[1], DateTime(data[2]), DateTime(data[3]), data[4], ridersIds, data[5]);
-                } 
-                else if (data[0].equals("PRIVATE")) {
-                    schedulePrivateRide(data[1], DateTime(data[2]), DateTime(data[3]), data[4], data[6], data[5]);
-                }
-                else {
+                    scheduleSharedRide(data[1], pickupDateTime, dropoffDateTime, data[4], ridersIds, driverId);
+                } else if (data[0].equals("PRIVATE")) {
+                    schedulePrivateRide(data[1], pickupDateTime, dropoffDateTime, data[4], Integer.parseInt(data[6]),
+                            driverId);
+                } else {
                     return false;
                 }
 
@@ -162,14 +162,68 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public boolean removeRider(int riderId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeRider'");
+        IRider rider = searchRiderById(riderId);
+        if (rider == null) {
+            return false;
+        }
+
+        LinkedList<IRide> frides = rides.getAllAlphabetically();
+        if (!frides.empty()) {
+
+            frides.findfirst();
+
+            while (!frides.last()) {
+                if (frides.retrieve() instanceof PrivateRide && frides.retrieve().hasRider(riderId)) {
+                    rides.removeRideById(frides.retrieve().getRideId());
+                } else if (frides.retrieve() instanceof SharedRide && frides.retrieve().hasRider(riderId)) {
+                    ((SharedRide) frides.retrieve()).removeParticipantById(riderId);
+                    if (((SharedRide) frides.retrieve()).isEmpty()) {
+                        rides.removeRideById(frides.retrieve().getRideId());
+                    }
+                }
+
+                frides.findnext();
+            }
+
+            if (frides.retrieve() instanceof PrivateRide && frides.retrieve().hasRider(riderId)) {
+                rides.removeRideById(frides.retrieve().getRideId());
+            } else if (frides.retrieve() instanceof SharedRide && frides.retrieve().hasRider(riderId)) {
+                ((SharedRide) frides.retrieve()).removeParticipantById(riderId);
+                if (((SharedRide) frides.retrieve()).isEmpty()) {
+                    rides.removeRideById(frides.retrieve().getRideId());
+                }
+            }
+        }
+        riders.removeById(riderId);
+
+        return true;
     }
 
     @Override
     public boolean removeDriver(int driverId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeDriver'");
+        IDriver driver = searchDriverById(driverId);
+        if (driver == null) {
+            return false;
+        }
+
+        LinkedList<IRide> frides = rides.getAllAlphabetically();
+        if (!frides.empty()) {
+            frides.findfirst();
+            while (!frides.last()) {
+                if (frides.retrieve().getDriver().getId() == driverId) {
+                    rides.removeRideById(frides.retrieve().getRideId());
+
+                }
+                frides.findnext();
+            }
+            if (frides.retrieve().getDriver().getId() == driverId) {
+                rides.removeRideById(frides.retrieve().getRideId());
+            }
+        }
+
+        drivers.removeById(driverId);
+
+        return true;
     }
 
     @Override
@@ -179,7 +233,7 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider = searchRiderById(riderId);
 
-        if (driver != null || rider != null || pickupTime.compareTo(dropoffTime) >= 0
+        if (driver == null || rider == null || pickupTime.compareTo(dropoffTime) >= 0
                 || riderHasRideConflict(pickupTime, dropoffTime, riderId)
                 || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
             return false;
@@ -194,19 +248,19 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider;
 
-        if (driver != null || pickupTime.compareTo(dropoffTime) >= 0
+        if (driver == null || pickupTime.compareTo(dropoffTime) >= 0
                 || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
             return false;
         }
-        
+
         SharedRide ride = new SharedRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver);
 
-        for (int riderid: riderIds) {
-            rider = searchRiderById(riderid)
+        for (int riderid : riderIds) {
+            rider = searchRiderById(riderid);
             if (rider == null || riderHasRideConflict(pickupTime, dropoffTime, riderid)) {
-                return false;    
+                return false;
             }
-            
+
             ride.addParticipant(rider);
         }
 
@@ -232,6 +286,10 @@ public class RideSharingSystem implements IRideSharingSystem {
         IRiderList result = new RiderList();
 
         IRide ride;
+
+        if (frides.empty()) {
+            return result.getAll();
+        }
 
         frides.findfirst();
 
@@ -279,10 +337,8 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     // helper methods
     private boolean rideOverlaps(IDateTime pickupDateTime, IDateTime dropoffDateTime, IRide other) {
-        if ((pickupDateTime.compareTo(other.getPickupTime()) >= 0
-                && pickupDateTime.compareTo(other.getDropoffTime()) <= 0)
-                || (dropoffDateTime.compareTo(other.getPickupTime()) >= 0
-                        && dropoffDateTime.compareTo(other.getDropoffTime()) <= 0)) {
+        if (pickupDateTime.compareTo(other.getDropoffTime()) < 0
+                && other.getPickupTime().compareTo(dropoffDateTime) < 0) {
             return true;
         }
         return false;
@@ -290,6 +346,10 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     private boolean riderHasRideConflict(IDateTime pickupDateTime, IDateTime dropoffDateTime, int riderId) {
         LinkedList<IRide> allRides = getAllRidesAlphabetically();
+
+        if (allRides.empty()) {
+            return false;
+        }
 
         allRides.findfirst();
 
@@ -311,6 +371,10 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     private boolean driverHasRideConflict(IDateTime pickupDateTime, IDateTime dropoffDateTime, int driverId) {
         LinkedList<IRide> allRides = getAllRidesAlphabetically();
+
+        if (allRides.empty()) {
+            return false;
+        }
 
         allRides.findfirst();
 
