@@ -109,17 +109,25 @@ public class RideSharingSystem implements IRideSharingSystem {
                 IRide ride;
 
                 if (data[0].equals("SHARED")) {
-                    // ride = new PrivateRide(new DateTime(data[2]), new DateTime(data[3]), null)
-                } else if (data[0].equals("PRIVATE")) {
+                    String[] ridersIdsRow = data[6].split(";");
+                    int[] ridersIds = new int[ridersIdsRow.length];
+                    for (int i = 0; i < ridersIdsRow.length; i++) {
+                        ridersIds[i] = Integer.parseInt(ridersIdsRow[i]);
+                    }
 
-                } else {
-                    continue;
+                    scheduleSharedRide(data[1], DateTime(data[2]), DateTime(data[3]), data[4], ridersIds, data[5]);
+                } 
+                else if (data[0].equals("PRIVATE")) {
+                    schedulePrivateRide(data[1], DateTime(data[2]), DateTime(data[3]), data[4], data[6], data[5]);
                 }
-
-                rides.addRide(ride);
+                else {
+                    return false;
+                }
 
                 line = br.readLine();
             }
+
+            return true;
 
         } catch (IOException e) {
             return false;
