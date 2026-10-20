@@ -30,7 +30,7 @@ public class SharedRide extends Ride implements ISharedRide {
     }
 
     public boolean hasRiderByFullName(String riderFullName) {
-        if (participants.empty()){
+        if (participants.empty()) {
             return false;
         }
 
@@ -51,11 +51,12 @@ public class SharedRide extends Ride implements ISharedRide {
 
     @Override
     public LinkedList<IRider> getParticipants() {
-        if (participants.empty()) {
-            return null;
-        }
-        
         LinkedList<IRider> result = new LinkedList<IRider>();
+        
+        if (participants.empty()) {
+            return result;
+        }
+
         participants.findfirst();
         while (!participants.last()) {
             result.insert(participants.retrieve());
