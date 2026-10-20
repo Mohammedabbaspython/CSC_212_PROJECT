@@ -238,7 +238,14 @@ public class RideSharingSystem implements IRideSharingSystem {
                 || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
             return false;
         }
-        rides.addRide(new PrivateRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver, rider));
+
+        IRide ride = new PrivateRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver, rider);
+
+        rides.addRide(ride);
+
+        driver.getRideHistory().insert(ride);
+        rider.getRideHistory().insert(ride);
+
         return true;
     }
 
@@ -263,6 +270,14 @@ public class RideSharingSystem implements IRideSharingSystem {
 
             ride.addParticipant(rider);
         }
+
+        for (int riderid : riderIds) {
+            rider = searchRiderById(riderid);
+
+            rider.getRideHistory().insert(ride);
+        }
+
+        driver.getRideHistory().insert(ride);
 
         rides.addRide(ride);
         return true;

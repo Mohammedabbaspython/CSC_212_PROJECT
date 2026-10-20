@@ -5,9 +5,9 @@ public class Main {
     public static void main(String args[]) {
         RideSharingSystem rideSystem = new RideSharingSystem();
         // loading
-        rideSystem.loadDriversFromCSV(null);
-        rideSystem.loadRidersFromCSV(null);
-        rideSystem.loadRidesFromCSV(null);
+        rideSystem.loadDriversFromCSV("Phase 1/drivers_30.csv");
+        rideSystem.loadRidersFromCSV("Phase 1/riders_100.csv");
+        rideSystem.loadRidesFromCSV("Phase 1/rides_40.csv");
         
         Scanner input = new Scanner(System.in);
         String option;
