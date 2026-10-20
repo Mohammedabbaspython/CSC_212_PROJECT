@@ -1,3 +1,3 @@
-public class DateTime {
+public class DateTime implements IDateTime {
     
 }

@@ -161,18 +161,9 @@ public class Main {
     }
 
     private static void addRider() {
-        boolean enter = true;
-        int id = 0;
-        while (enter) {
-            try {
-                System.out.print("Enter Rider ID: ");
-                id = input.nextInt();
-                enter = false;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid Input. Try again");
-                input.nextLine();
-            }
-        }
+        System.out.print("Enter Rider ID: ");
+
+        int id = takeIntInput();
         input.nextLine();
         System.out.print("Enter Rider Name: ");
         String RiderName = input.nextLine();
@@ -211,6 +202,91 @@ public class Main {
     }
 
     private static void addRide() {
+        // success
+        boolean success = false;
 
+        // ride type
+        System.out.println("Ride types:\n1-Private Ride\n2-Shared Ride.");
+        int rideType = takeChoiceInput(2);
+
+        // pickup/dropoff datetime
+            IDateTime pickupDateTime = new DateTime();
+            IDateTime dropoffDateTime = new DateTime();
+        // pickup/dropoff location
+        System.out.println("Enter pickup location: ");
+        String pickupLocation = input.nextLine();
+
+        System.out.println("Enter dropoff location: ");
+        String dropoffLocation = input.nextLine();
+
+        // driver id
+        System.out.println("Enter driver ID: ");
+        int driverId = takeIntInput();
+
+        if (rideType == 1) {
+            // rider id
+            System.out.println("Enter rider ID: ");
+            int riderId = takeIntInput();
+
+            // schedule private ride
+            success = rideSystem.schedulePrivateRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation, riderId, driverId);
+        } else {
+            // riders ids
+            System.out.println("Enter the number of riders: ");
+            int nriders = takePositiveIntInput();
+            int[] ridersIds = new int[nriders];
+
+            for(int i = 0; i < nriders; i++) {
+                ridersIds[i] = takeIntInput();
+            }
+            
+            success = rideSystem.scheduleSharedRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation, ridersIds, driverId);
+        }
+
+        if (success) {
+            System.out.println("Ride Scheduled Successfully!");
+        }
+        else {
+            System.out.println("Ride Scheduling Failed!");
+        }
+    }
+
+    // handles input
+    public static int takeIntInput() {
+        while (true) {
+            try {
+                return input.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Try again.");
+                input.nextLine(); // clear invalid input
+            }
+        }
+    }
+
+    private static int takeChoiceInput(int numOfOptions) {
+        while (true) {
+            System.out.print("Choose an option: ");
+
+            int choice = takeIntInput();
+
+            if (choice >= 1 && choice <= numOfOptions) {
+                return choice;
+            }
+
+            System.out.println(
+                    "\tInvalid input. Please enter an integer between 1 and " + numOfOptions);
+        }
+    }
+
+    public static int takePositiveIntInput() {
+        while (true) {
+            int value = takeIntInput();
+
+            if (value > 0) {
+                return value;
+            }
+
+            System.out.println("Invalid input. Please enter a positive integer.");
+        }
     }
 }
