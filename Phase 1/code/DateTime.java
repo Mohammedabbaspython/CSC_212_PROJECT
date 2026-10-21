@@ -32,11 +32,11 @@ public class DateTime implements IDateTime {
         if (dateParts.length != 3 || timeParts.length != 2) {
             throw new IllegalArgumentException("Expected format: MM/DD/YYYY HH:MM");
         }
-        int m=Integer.parseInt(dateParts[0]);
-        int d=Integer.parseInt(dateParts[1]);
-        int y=Integer.parseInt(dateParts[2]);
-        int h=Integer.parseInt(timeParts[0]);
-        int min=Integer.parseInt(timeParts[1]);
+        int m = Integer.parseInt(dateParts[0]);
+        int d = Integer.parseInt(dateParts[1]);
+        int y = Integer.parseInt(dateParts[2]);
+        int h = Integer.parseInt(timeParts[0]);
+        int min = Integer.parseInt(timeParts[1]);
         if (m < 1 || m > 12 || d < 1 || d > 31 || h < 0 || h > 23 || min < 0 || min > 59) {
             throw new IllegalArgumentException("Invalid date/time values.");
         }
@@ -45,7 +45,7 @@ public class DateTime implements IDateTime {
         this.year = y;
         this.hour = h;
         this.minute = min;
-        
+
     }
 
     @Override

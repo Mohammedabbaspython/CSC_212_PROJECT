@@ -76,9 +76,34 @@ public class RideSharingSystem implements IRideSharingSystem {
 
             while (line != null) {
                 String[] data = line.split(",");
+                VehicleType vType;
 
-                // riders.add(new Driver(Integer.parseInt(data[0]), data[1], data[3], data[2],
-                // data[4]));
+                switch (data[4]) {
+                    case "SEDAN":
+                        vType = VehicleType.SEDAN;
+                        break;
+
+                    case "LUXURY_SEDAN":
+                        vType = VehicleType.LUXURY_SEDAN;
+                        break;
+
+                    case "SUV":
+                        vType = VehicleType.SUV;
+
+                    case "VAN":
+                        vType = VehicleType.VAN;
+                        break;
+
+                    default:
+                        return false;
+                }
+
+                try {
+                    drivers.add(new Driver(Integer.parseInt(data[0]), data[1], data[3], data[2], vType));
+
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
 
                 line = br.readLine();
             }
@@ -104,9 +129,12 @@ public class RideSharingSystem implements IRideSharingSystem {
 
                 IRide ride;
 
-                pickupDateTime = new DateTime(data[2]);
-                dropoffDateTime = new DateTime(data[3]);
-
+                try {
+                    pickupDateTime = new DateTime(data[2]);
+                    dropoffDateTime = new DateTime(data[3]);
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
                 int driverId = Integer.parseInt(data[5]);
 
                 if (data[0].equals("SHARED")) {
@@ -132,7 +160,6 @@ public class RideSharingSystem implements IRideSharingSystem {
         } catch (IOException e) {
             return false;
         }
-        return true;
     }
 
     // endlater

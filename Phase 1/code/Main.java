@@ -210,8 +210,24 @@ public class Main {
         int rideType = takeChoiceInput(2);
 
         // pickup/dropoff datetime
-            IDateTime pickupDateTime = new DateTime();
-            IDateTime dropoffDateTime = new DateTime();
+        IDateTime pickupDateTime;
+        IDateTime dropoffDateTime;
+
+        while (true) {
+            try {
+                System.out.println("Enter pickup time (the format is MM/DD/YYYY HH:MM): ");
+                pickupDateTime = new DateTime(input.nextLine());
+
+                System.out.println("Enter dropoff time (the format is MM/DD/YYYY HH:MM): ");
+                dropoffDateTime = new DateTime(input.nextLine());
+
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("invalid date time format try again");
+                continue;
+            }
+        }
+
         // pickup/dropoff location
         System.out.println("Enter pickup location: ");
         String pickupLocation = input.nextLine();
@@ -229,24 +245,25 @@ public class Main {
             int riderId = takeIntInput();
 
             // schedule private ride
-            success = rideSystem.schedulePrivateRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation, riderId, driverId);
+            success = rideSystem.schedulePrivateRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation,
+                    riderId, driverId);
         } else {
             // riders ids
             System.out.println("Enter the number of riders: ");
             int nriders = takePositiveIntInput();
             int[] ridersIds = new int[nriders];
 
-            for(int i = 0; i < nriders; i++) {
+            for (int i = 0; i < nriders; i++) {
                 ridersIds[i] = takeIntInput();
             }
-            
-            success = rideSystem.scheduleSharedRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation, ridersIds, driverId);
+
+            success = rideSystem.scheduleSharedRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation,
+                    ridersIds, driverId);
         }
 
         if (success) {
             System.out.println("Ride Scheduled Successfully!");
-        }
-        else {
+        } else {
             System.out.println("Ride Scheduling Failed!");
         }
     }
