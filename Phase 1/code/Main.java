@@ -39,12 +39,16 @@ public class Main {
 
                 case "5":
                     // List all drivers
+                    printDrivers();
                     break;
+
                 case "6":
                     // Search for drivers by vehicle type
+                    searchDriversByVehicleType();
                     break;
                 case "7":
                     // Add a driver
+                    addDriver();
                     break;
                 case "8":
                     // List all rides alphabetically by pickup location.
@@ -306,4 +310,64 @@ public class Main {
             System.out.println("Invalid input. Please enter a positive integer.");
         }
     }
+        private static void printDrivers() {
+        System.out.println("Here is the list of all the Drivers in the system: ");
+        LinkedList<IDriver> allDrivers = rideSystem.getAllDrivers();
+        if (allDrivers.empty()) {
+            System.out.println("There is no Drivers.");
+        } else {
+            allDrivers.findfirst();
+            while (!allDrivers.last()) {
+                System.out.println(allDrivers.retrieve().toString());
+                allDrivers.findnext();
+            }
+            System.out.println(allDrivers.retrieve().toString());
+        }
+    }
+        private static void searchDriversByVehicleType() {
+        System.out.println("Enter VehicleType (SEDAN, LUXURY_SEDAN, SUV, VAN): ");
+        try{
+            VehicleType vehicleType = VehicleType.valueOf(input.nextLine().trim().toUpperCase());// Converts String to Enum
+            LinkedList<IDriver> foundVehicleTypeDriver = rideSystem.searchDriversByVehicleType(vehicleType);
+            if (foundVehicleTypeDriver.empty()) {
+                System.out.println("There are no drivers with this vehicle type.");
+            } else {
+                foundVehicleTypeDriver.findfirst();
+                while (!foundVehicleTypeDriver.last()) {
+                    System.out.println(foundVehicleTypeDriver.retrieve().toString());
+                    foundVehicleTypeDriver.findnext();
+                }
+                System.out.println(foundVehicleTypeDriver.retrieve().toString());
+            }
+        }catch (IllegalArgumentException e) {
+            System.out.println("Invalid vehicle type entered.");
+        }
+        }
+        private static void addDriver() {
+        System.out.print("Enter Driver ID: ");
+
+        int id = takeIntInput();
+        input.nextLine();
+        System.out.print("Enter Driver Name: ");
+        String DriverName = input.nextLine();
+        System.out.print("Enter Phone Number: ");
+        String phoneNumber = input.nextLine();
+        System.out.print("Enter Vehicle Plate: ");
+        String vehiclePlate = input.nextLine();
+        System.out.print("Enter Vehicle Type (SEDAN, LUXURY_SEDAN, SUV, VAN): ");
+        VehicleType vehicleType = VehicleType.valueOf(input.nextLine().trim().toUpperCase()); // Converts String to Enum
+        try {
+            IDriver newDriver = new Driver(id, DriverName, phoneNumber, vehiclePlate, vehicleType);
+            if (rideSystem.addDriver(newDriver)) {
+                System.out.println("Driver added successfully.");
+            } else {
+                System.out.println("Failed to add driver.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+
+
 }
