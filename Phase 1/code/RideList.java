@@ -13,7 +13,7 @@ public class RideList implements IRideList {
         if (rides.empty()) {
             rides.insert(ride);
         } else {
-            rides.findfirst();
+            rides.findFirst();
 
             IRide tmp;
 
@@ -24,7 +24,7 @@ public class RideList implements IRideList {
                     rides.insert(tmp);
                     return true;
                 }
-                rides.findnext();
+                rides.findNext();
             }
 
             if (ride.compareTo(rides.retrieve()) < 0) {
@@ -47,13 +47,13 @@ public class RideList implements IRideList {
             return result;
         }
 
-        rides.findfirst();
+        rides.findFirst();
 
         while (!rides.last()) {
             if (rides.retrieve().getPickupLocation().equals(pickupLocation)) {
                 result.insert(rides.retrieve());
             }
-            rides.findnext();
+            rides.findNext();
         }
 
         if (rides.retrieve().getPickupLocation().equals(pickupLocation)) {
@@ -71,13 +71,13 @@ public class RideList implements IRideList {
             return result;
         }
 
-        rides.findfirst();
+        rides.findFirst();
 
         while (!rides.last()) {
             if (((Ride) rides.retrieve()).hasRiderByFullName(riderFullName)) {
                 result.insert(rides.retrieve());
             }
-            rides.findnext();
+            rides.findNext();
         }
 
         if (((Ride) rides.retrieve()).hasRiderByFullName(riderFullName)) {
@@ -95,11 +95,11 @@ public class RideList implements IRideList {
             return result;
         }
 
-        rides.findfirst();
+        rides.findFirst();
 
         while (!rides.last()) {
             result.insert(rides.retrieve());
-            rides.findnext();
+            rides.findNext();
         }
 
         result.insert(rides.retrieve());
@@ -113,13 +113,13 @@ public class RideList implements IRideList {
             return false;
         }
 
-        rides.findfirst();
+        rides.findFirst();
         while (!rides.last()) {
             if (rides.retrieve().getRideId() == rideId) {
                 rides.remove();
                 return true;
             }
-            rides.findnext();
+            rides.findNext();
         }
         rides.remove();
 
@@ -136,12 +136,12 @@ public class RideList implements IRideList {
             return false;
         }
 
-        rides.findfirst();
+        rides.findFirst();
         while (!rides.last()) {
             if (rides.retrieve().getRideId() == rideId) {
                 return true;
             }
-            rides.findnext();
+            rides.findNext();
         }
 
         if (rides.retrieve().getRideId() == rideId) {

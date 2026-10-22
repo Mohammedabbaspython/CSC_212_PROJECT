@@ -14,12 +14,12 @@ public class SharedRide extends Ride implements ISharedRide {
             return false;
         }
 
-        participants.findfirst();
+        participants.findFirst();
         while (!participants.last()) {
             if (participants.retrieve().getId() == riderId) {
                 return true;
             }
-            participants.findnext();
+            participants.findNext();
         }
 
         if (participants.retrieve().getId() == riderId) {
@@ -34,12 +34,12 @@ public class SharedRide extends Ride implements ISharedRide {
             return false;
         }
 
-        participants.findfirst();
+        participants.findFirst();
         while (!participants.last()) {
             if (participants.retrieve().getName().equals(riderFullName)) {
                 return true;
             }
-            participants.findnext();
+            participants.findNext();
         }
 
         if (participants.retrieve().getName().equals(riderFullName)) {
@@ -57,10 +57,10 @@ public class SharedRide extends Ride implements ISharedRide {
             return result;
         }
 
-        participants.findfirst();
+        participants.findFirst();
         while (!participants.last()) {
             result.insert(participants.retrieve());
-            participants.findnext();
+            participants.findNext();
         }
         result.insert(participants.retrieve());
         return result;
@@ -82,13 +82,13 @@ public class SharedRide extends Ride implements ISharedRide {
             return false;
         }
 
-        participants.findfirst();
+        participants.findFirst();
         while (!participants.last()) {
             if (participants.retrieve().getId() == riderId) {
                 participants.remove();
                 return true;
             }
-            participants.findnext();
+            participants.findNext();
         }
 
         if (participants.retrieve().getId() == riderId) {

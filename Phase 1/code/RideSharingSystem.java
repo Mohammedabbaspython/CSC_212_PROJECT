@@ -44,7 +44,7 @@ public class RideSharingSystem implements IRideSharingSystem {
         return riders.getAll();
     }
 
-    // later
+
     @Override
     public boolean loadRidersFromCSV(String ridersFilePath) {
         try {
@@ -162,7 +162,6 @@ public class RideSharingSystem implements IRideSharingSystem {
         }
     }
 
-    // endlater
     @Override
     public IDriver searchDriverById(int driverId) {
         // TODO Auto-generated method stub
@@ -197,7 +196,7 @@ public class RideSharingSystem implements IRideSharingSystem {
         LinkedList<IRide> frides = rides.getAllAlphabetically();
         if (!frides.empty()) {
 
-            frides.findfirst();
+            frides.findFirst();
 
             while (!frides.last()) {
                 if (frides.retrieve() instanceof PrivateRide && frides.retrieve().hasRider(riderId)) {
@@ -209,7 +208,7 @@ public class RideSharingSystem implements IRideSharingSystem {
                     }
                 }
 
-                frides.findnext();
+                frides.findNext();
             }
 
             if (frides.retrieve() instanceof PrivateRide && frides.retrieve().hasRider(riderId)) {
@@ -235,13 +234,13 @@ public class RideSharingSystem implements IRideSharingSystem {
 
         LinkedList<IRide> frides = rides.getAllAlphabetically();
         if (!frides.empty()) {
-            frides.findfirst();
+            frides.findFirst();
             while (!frides.last()) {
                 if (frides.retrieve().getDriver().getId() == driverId) {
                     rides.removeRideById(frides.retrieve().getRideId());
 
                 }
-                frides.findnext();
+                frides.findNext();
             }
             if (frides.retrieve().getDriver().getId() == driverId) {
                 rides.removeRideById(frides.retrieve().getRideId());
@@ -333,21 +332,21 @@ public class RideSharingSystem implements IRideSharingSystem {
             return result.getAll();
         }
 
-        frides.findfirst();
+        frides.findFirst();
 
         while (!frides.last()) {
             ride = frides.retrieve();
             if (ride instanceof SharedRide) {
                 tmpRiders = ((SharedRide) ride).getParticipants();
 
-                tmpRiders.findfirst();
+                tmpRiders.findFirst();
                 while (!tmpRiders.last()) {
                     result.add(tmpRiders.retrieve());
-                    tmpRiders.findnext();
+                    tmpRiders.findNext();
                 }
                 result.add(tmpRiders.retrieve());
             }
-            frides.findnext();
+            frides.findNext();
         }
 
         ride = frides.retrieve();
@@ -355,10 +354,10 @@ public class RideSharingSystem implements IRideSharingSystem {
         if (ride instanceof SharedRide) {
             tmpRiders = ((SharedRide) ride).getParticipants();
 
-            tmpRiders.findfirst();
+            tmpRiders.findFirst();
             while (!tmpRiders.last()) {
                 result.add(tmpRiders.retrieve());
-                tmpRiders.findnext();
+                tmpRiders.findNext();
             }
             result.add(tmpRiders.retrieve());
         }
@@ -393,14 +392,14 @@ public class RideSharingSystem implements IRideSharingSystem {
             return false;
         }
 
-        allRides.findfirst();
+        allRides.findFirst();
 
         while (!allRides.last()) {
             if (allRides.retrieve().hasRider(riderId)
                     && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {
                 return true;
             }
-            allRides.findnext();
+            allRides.findNext();
         }
 
         if (allRides.retrieve().hasRider(riderId)
@@ -418,14 +417,14 @@ public class RideSharingSystem implements IRideSharingSystem {
             return false;
         }
 
-        allRides.findfirst();
+        allRides.findFirst();
 
         while (!allRides.last()) {
             if (allRides.retrieve().getDriver().getId() == driverId
                     && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {
                 return true;
             }
-            allRides.findnext();
+            allRides.findNext();
         }
         if (allRides.retrieve().getDriver().getId() == driverId
                 && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {

@@ -92,11 +92,11 @@ public class Main {
 
         System.out.println("Rides: ");
 
-        allRides.findfirst();
+        allRides.findFirst();
 
         while (!allRides.last()) {
             System.out.println(allRides.retrieve());
-            allRides.findnext();
+            allRides.findNext();
         }
 
         System.out.println(allRides.retrieve());
@@ -108,11 +108,11 @@ public class Main {
             return;
         }
 
-        riders.findfirst();
+        riders.findFirst();
 
         while (!riders.last()) {
             System.out.println(riders.retrieve());
-            riders.findnext();
+            riders.findNext();
         }
 
         System.out.println(riders.retrieve());
@@ -139,10 +139,10 @@ public class Main {
         if (allRiders.empty()) {
             System.out.println("There is no riders.");
         } else {
-            allRiders.findfirst();
+            allRiders.findFirst();
             while (!allRiders.last()) {
                 System.out.println(allRiders.retrieve().toString());
-                allRiders.findnext();
+                allRiders.findNext();
             }
             System.out.println(allRiders.retrieve().toString());
         }
@@ -155,10 +155,10 @@ public class Main {
         if (foundHomeCityRider.empty()) {
             System.out.println("There is no riders.");
         } else {
-            foundHomeCityRider.findfirst();
+            foundHomeCityRider.findFirst();
             while (!foundHomeCityRider.last()) {
                 System.out.println(foundHomeCityRider.retrieve().toString());
-                foundHomeCityRider.findnext();
+                foundHomeCityRider.findNext();
             }
             System.out.println(foundHomeCityRider.retrieve().toString());
         }
@@ -196,10 +196,10 @@ public class Main {
         if (foundRiderName.empty()) {
             System.out.println("There is no riders.");
         } else {
-            foundRiderName.findfirst();
+            foundRiderName.findFirst();
             while (!foundRiderName.last()) {
                 System.out.println(foundRiderName.retrieve().toString());
-                foundRiderName.findnext();
+                foundRiderName.findNext();
             }
             System.out.println(foundRiderName.retrieve().toString());
         }
@@ -317,10 +317,10 @@ public class Main {
         if (allDrivers.empty()) {
             System.out.println("There is no Drivers.");
         } else {
-            allDrivers.findfirst();
+            allDrivers.findFirst();
             while (!allDrivers.last()) {
                 System.out.println(allDrivers.retrieve().toString());
-                allDrivers.findnext();
+                allDrivers.findNext();
             }
             System.out.println(allDrivers.retrieve().toString());
         }
@@ -335,10 +335,10 @@ public class Main {
             if (foundVehicleTypeDriver.empty()) {
                 System.out.println("There are no drivers with this vehicle type.");
             } else {
-                foundVehicleTypeDriver.findfirst();
+                foundVehicleTypeDriver.findFirst();
                 while (!foundVehicleTypeDriver.last()) {
                     System.out.println(foundVehicleTypeDriver.retrieve().toString());
-                    foundVehicleTypeDriver.findnext();
+                    foundVehicleTypeDriver.findNext();
                 }
                 System.out.println(foundVehicleTypeDriver.retrieve().toString());
             }

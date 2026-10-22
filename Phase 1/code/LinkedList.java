@@ -19,11 +19,11 @@ public class LinkedList<T> {
         return current.next == null;
     }
 
-    public void findfirst() {
+    public void findFirst() {
         current = head;
     }
 
-    public void findnext() {
+    public void findNext() {
         current = current.next;
     }
 

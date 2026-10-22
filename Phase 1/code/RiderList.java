@@ -16,7 +16,7 @@ public class RiderList implements IRiderList {
             riders.insert(rider);
             return true;
         }
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (rider.compareTo(riders.retrieve()) < 0) {
                 IRider tmp = riders.retrieve();
@@ -24,7 +24,7 @@ public class RiderList implements IRiderList {
                 riders.insert(tmp);
                 return true;
             }
-            riders.findnext();
+            riders.findNext();
         }
         if (rider.compareTo(riders.retrieve()) < 0) {
             IRider tmp = riders.retrieve();
@@ -41,12 +41,12 @@ public class RiderList implements IRiderList {
         if (riders.empty()) {
             return null;
         }
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (riders.retrieve().getId() == riderId) {
                 return riders.retrieve();
             }
-            riders.findnext();
+            riders.findNext();
 
         }
         if (riders.retrieve().getId() == riderId) {
@@ -62,12 +62,12 @@ public class RiderList implements IRiderList {
             return result;
         }
 
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (riders.retrieve().getName().equals(fullName)) {
                 result.insert(riders.retrieve());
             }
-            riders.findnext();
+            riders.findNext();
         }
         if (riders.retrieve().getName().equals(fullName)) {
             result.insert(riders.retrieve());
@@ -79,12 +79,12 @@ public class RiderList implements IRiderList {
         if (riders.empty()) {
             return null;
         }
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (riders.retrieve().getEmail().equals(email)) {
                 return riders.retrieve();
             }
-            riders.findnext();
+            riders.findNext();
 
         }
         if (riders.retrieve().getEmail().equals(email)) {
@@ -100,12 +100,12 @@ public class RiderList implements IRiderList {
             return result;
         }
 
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (riders.retrieve().getHomeCity().equals(homeCity)) {
                 result.insert(riders.retrieve());
             }
-            riders.findnext();
+            riders.findNext();
         }
         if (riders.retrieve().getHomeCity().equals(homeCity)) {
             result.insert(riders.retrieve());
@@ -118,10 +118,10 @@ public class RiderList implements IRiderList {
         if (riders.empty()) {
             return result;
         }
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             result.insert(riders.retrieve());
-            riders.findnext();
+            riders.findNext();
         }
         result.insert(riders.retrieve());
         return result;
@@ -132,13 +132,13 @@ public class RiderList implements IRiderList {
         if (riders.empty()) {
             return false;
         }
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (riders.retrieve().getId() == riderId) {
                 riders.remove();
                 return true;
             }
-            riders.findnext();
+            riders.findNext();
         }
         if (riders.retrieve().getId() == riderId) {
             riders.remove();
@@ -151,13 +151,13 @@ public class RiderList implements IRiderList {
         if (riders.empty()) {
             return false;
         }
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.last()) {
             if (riders.retrieve().getEmail().equals(email)) {
                 riders.remove();
                 return true;
             }
-            riders.findnext();
+            riders.findNext();
 
         }
         if (riders.retrieve().getEmail().equals(email)) {
@@ -169,7 +169,7 @@ public class RiderList implements IRiderList {
 
     public int removeByName(String fullName) {
         int count = 0;
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.empty()) {
             if (riders.retrieve().getName().equals(fullName)) {
                 count++;
@@ -178,7 +178,7 @@ public class RiderList implements IRiderList {
                 if (riders.last()) {
                     break;
                 }
-                riders.findnext();
+                riders.findNext();
             }
         }
         return count;
@@ -186,7 +186,7 @@ public class RiderList implements IRiderList {
 
     public int removeByHomeCity(String homeCity) {
         int count = 0;
-        riders.findfirst();
+        riders.findFirst();
         while (!riders.empty()) {
             if (riders.retrieve().getHomeCity().equals(homeCity)) {
                 count++;
@@ -196,7 +196,7 @@ public class RiderList implements IRiderList {
                 if (riders.last()) {
                     break;
                 }
-                riders.findnext();
+                riders.findNext();
             }
         }
         return count;
