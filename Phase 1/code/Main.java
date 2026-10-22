@@ -299,7 +299,7 @@ public class Main {
         }
     }
 
-    public static int takePositiveIntInput() {
+    private static int takePositiveIntInput() {
         while (true) {
             int value = takeIntInput();
 
@@ -310,7 +310,8 @@ public class Main {
             System.out.println("Invalid input. Please enter a positive integer.");
         }
     }
-        private static void printDrivers() {
+
+    private static void printDrivers() {
         System.out.println("Here is the list of all the Drivers in the system: ");
         LinkedList<IDriver> allDrivers = rideSystem.getAllDrivers();
         if (allDrivers.empty()) {
@@ -324,10 +325,12 @@ public class Main {
             System.out.println(allDrivers.retrieve().toString());
         }
     }
-        private static void searchDriversByVehicleType() {
+
+    private static void searchDriversByVehicleType() {
         System.out.println("Enter VehicleType (SEDAN, LUXURY_SEDAN, SUV, VAN): ");
-        try{
-            VehicleType vehicleType = VehicleType.valueOf(input.nextLine().trim().toUpperCase());// Converts String to Enum
+        try {
+            VehicleType vehicleType = VehicleType.valueOf(input.nextLine().trim().toUpperCase());// Converts String to
+                                                                                                 // Enum
             LinkedList<IDriver> foundVehicleTypeDriver = rideSystem.searchDriversByVehicleType(vehicleType);
             if (foundVehicleTypeDriver.empty()) {
                 System.out.println("There are no drivers with this vehicle type.");
@@ -339,11 +342,12 @@ public class Main {
                 }
                 System.out.println(foundVehicleTypeDriver.retrieve().toString());
             }
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Invalid vehicle type entered.");
         }
-        }
-        private static void addDriver() {
+    }
+
+    private static void addDriver() {
         System.out.print("Enter Driver ID: ");
 
         int id = takeIntInput();
@@ -367,7 +371,5 @@ public class Main {
             System.out.println("Error: " + e.getMessage());
         }
     }
-
-
 
 }
