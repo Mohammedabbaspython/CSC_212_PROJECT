@@ -44,7 +44,6 @@ public class RideSharingSystem implements IRideSharingSystem {
         return riders.getAll();
     }
 
-
     @Override
     public boolean loadRidersFromCSV(String ridersFilePath) {
         try {
@@ -102,6 +101,7 @@ public class RideSharingSystem implements IRideSharingSystem {
                     drivers.add(new Driver(Integer.parseInt(data[0]), data[1], data[3], data[2], vType));
 
                 } catch (IllegalArgumentException e) {
+                    br.close();
                     return false;
                 }
 
@@ -127,12 +127,11 @@ public class RideSharingSystem implements IRideSharingSystem {
             while (line != null) {
                 String[] data = line.split(",");
 
-                IRide ride;
-
                 try {
                     pickupDateTime = new DateTime(data[2]);
                     dropoffDateTime = new DateTime(data[3]);
                 } catch (IllegalArgumentException e) {
+                    br.close();
                     return false;
                 }
                 int driverId = Integer.parseInt(data[5]);
@@ -149,12 +148,14 @@ public class RideSharingSystem implements IRideSharingSystem {
                     schedulePrivateRide(data[1], pickupDateTime, dropoffDateTime, data[4], Integer.parseInt(data[6]),
                             driverId);
                 } else {
+                    br.close();
                     return false;
                 }
 
                 line = br.readLine();
             }
 
+            br.close();
             return true;
 
         } catch (IOException e) {
