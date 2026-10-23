@@ -278,7 +278,6 @@ public class Main {
                 return Integer.parseInt(input.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Try again.");
-                input.nextLine(); // clear invalid input
             }
         }
     }
