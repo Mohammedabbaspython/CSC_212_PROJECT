@@ -164,27 +164,23 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public IDriver searchDriverById(int driverId) {
-        // TODO Auto-generated method stub
         return drivers.findById(driverId);
     }
 
     @Override
     public IDriver searchDriverByVehiclePlate(String vehiclePlate) {
-        // TODO Auto-generated method stub
-        return drivers.findByVehiclePlate(driverId);
+        return drivers.findByVehiclePlate(vehiclePlate);
     }
 
     @Override
     public LinkedList<IDriver> searchDriversByVehicleType(VehicleType vehicleType) {
-        // TODO Auto-generated method stub
-        return drivers.findByVehicleType(driverId);
+        return drivers.findByVehicleType(vehicleType);
 
     }
 
     @Override
     public LinkedList<IDriver> getAllDrivers() {
-        // TODO Auto-generated method stub
-        return drivers.getAll(driverId);
+        return drivers.getAll();
 
     }
 
@@ -374,7 +370,6 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public boolean addDriver(IDriver driver) {
-        // TODO Auto-generated method stub
         return drivers.add(driver);
     }
 
