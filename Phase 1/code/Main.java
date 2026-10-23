@@ -168,7 +168,6 @@ public class Main {
         System.out.print("Enter Rider ID: ");
 
         int id = takeIntInput();
-        input.nextLine();
         System.out.print("Enter Rider Name: ");
         String RiderName = input.nextLine();
         System.out.print("Enter Phone Number: ");
@@ -277,7 +276,7 @@ public class Main {
         while (true) {
             try {
                 return Integer.parseInt(input.nextLine());
-            } catch (InputMismatchException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Try again.");
                 input.nextLine(); // clear invalid input
             }
@@ -351,7 +350,6 @@ public class Main {
         System.out.print("Enter Driver ID: ");
 
         int id = takeIntInput();
-        input.nextLine();
         System.out.print("Enter Driver Name: ");
         String DriverName = input.nextLine();
         System.out.print("Enter Phone Number: ");
