@@ -98,7 +98,7 @@ public class RideSharingSystem implements IRideSharingSystem {
                 }
 
                 try {
-                    drivers.add(new Driver(Integer.parseInt(data[0]), data[1], data[3], data[2], vType));
+                    drivers.add(new Driver(Integer.parseInt(data[0]), data[1], data[2], data[3], vType));
 
                 } catch (IllegalArgumentException e) {
                     br.close();
