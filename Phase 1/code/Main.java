@@ -359,8 +359,9 @@ public class Main {
         System.out.print("Enter Vehicle Plate: ");
         String vehiclePlate = input.nextLine();
         System.out.print("Enter Vehicle Type (SEDAN, LUXURY_SEDAN, SUV, VAN): ");
-        VehicleType vehicleType = VehicleType.valueOf(input.nextLine().trim().toUpperCase()); // Converts String to Enum
         try {
+            // Converts String to Enum
+            VehicleType vehicleType = VehicleType.valueOf(input.nextLine().trim().toUpperCase());
             IDriver newDriver = new Driver(id, DriverName, phoneNumber, vehiclePlate, vehicleType);
             if (rideSystem.addDriver(newDriver)) {
                 System.out.println("Driver added successfully.");
