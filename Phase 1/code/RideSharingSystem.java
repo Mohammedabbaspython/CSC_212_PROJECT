@@ -88,6 +88,7 @@ public class RideSharingSystem implements IRideSharingSystem {
 
                     case "SUV":
                         vType = VehicleType.SUV;
+                        break;
 
                     case "VAN":
                         vType = VehicleType.VAN;
