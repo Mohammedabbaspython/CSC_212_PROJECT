@@ -276,7 +276,7 @@ public class Main {
     public static int takeIntInput() {
         while (true) {
             try {
-                return input.nextInt();
+                return Integer.parseInt(input.nextLine());
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Try again.");
                 input.nextLine(); // clear invalid input
