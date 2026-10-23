@@ -165,25 +165,27 @@ public class RideSharingSystem implements IRideSharingSystem {
     @Override
     public IDriver searchDriverById(int driverId) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchDriverById'");
+        return drivers.findById(driverId);
     }
 
     @Override
     public IDriver searchDriverByVehiclePlate(String vehiclePlate) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchDriverByVehiclePlate'");
+        return drivers.findByVehiclePlate(driverId);
     }
 
     @Override
     public LinkedList<IDriver> searchDriversByVehicleType(VehicleType vehicleType) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchDriversByVehicleType'");
+        return drivers.findByVehicleType(driverId);
+
     }
 
     @Override
     public LinkedList<IDriver> getAllDrivers() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllDrivers'");
+        return drivers.getAll(driverId);
+
     }
 
     @Override
@@ -373,7 +375,7 @@ public class RideSharingSystem implements IRideSharingSystem {
     @Override
     public boolean addDriver(IDriver driver) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addDriver'");
+        return drivers.add(driver);
     }
 
     // helper methods
