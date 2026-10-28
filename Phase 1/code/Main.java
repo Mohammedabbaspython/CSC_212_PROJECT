@@ -256,6 +256,7 @@ public class Main {
             int[] ridersIds = new int[nriders];
 
             for (int i = 0; i < nriders; i++) {
+                System.out.print("Enter ID for Rider " + (1+i) + ": ");
                 ridersIds[i] = takeIntInput();
             }
 
