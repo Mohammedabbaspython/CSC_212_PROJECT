@@ -2,9 +2,10 @@ public class PrivateRide extends Ride implements IPrivateRide {
     private IRider rider;
 
 
-    public PrivateRide(IDateTime pickupDateTime, IDateTime dropoffDateTime, String pickupLocation,
-            String dropoffLocation, IDriver driver, IRider rider) {
-        super(pickupDateTime, dropoffDateTime, pickupLocation, dropoffLocation, driver);
+    public PrivateRide(int rideId, String pickupLocation, String dropoffLocation, ITimeSlot timeSlot, 
+        IRider rider, IDriver driver) {
+        super(rideId, pickupLocation, dropoffLocation, timeSlot, driver);
+
         this.rider = rider;
     }
 
@@ -12,23 +13,11 @@ public class PrivateRide extends Ride implements IPrivateRide {
         return rider;
     }
 
-    public void setRider(IRider rider) {
-        this.rider = rider;
-    }
-
     @Override
     public boolean hasRider(int riderId) {
         if (rider == null)
             return false;
         return  riderId == rider.getId();
-    }
-
-    public boolean hasRiderByFullName(String riderFullName) {
-        if (rider == null){
-            return false;
-        }
-
-        return rider.getName().equals(riderFullName);
     }
 
     @Override
