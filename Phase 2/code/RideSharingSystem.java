@@ -34,12 +34,10 @@ public class RideSharingSystem implements IRideSharingSystem {
         ridersByID = new BST<Integer, IRider>();
 
         ridersByNameIndex = new BST<String, IBST<Integer, IRider>>();
-        ridersByName = new NonUniqueIndexHelper<String, Integer, IRider>(
-                ridersByNameIndex);
+        ridersByName = new NonUniqueIndexHelper<String, Integer, IRider>(ridersByNameIndex);
 
         ridersByCityIndex = new BST<String, IBST<Integer, IRider>>();
-        ridersByCity = new NonUniqueIndexHelper<String, Integer, IRider>(
-                ridersByCityIndex);
+        ridersByCity = new NonUniqueIndexHelper<String, Integer, IRider>(ridersByCityIndex);
 
         // Drivers
         driversByID = new BST<Integer, IDriver>();
@@ -47,19 +45,16 @@ public class RideSharingSystem implements IRideSharingSystem {
         driversByPlate = new BST<String, IDriver>();
 
         driversByTypeIndex = new BST<VehicleType, IBST<Integer, IDriver>>();
-        driversByType = new NonUniqueIndexHelper<VehicleType, Integer, IDriver>(
-                driversByTypeIndex);
+        driversByType = new NonUniqueIndexHelper<VehicleType, Integer, IDriver>(driversByTypeIndex);
 
         // Rides
         ridesByID = new BST<Integer, IRide>();
 
         ridesByPickupLocationIndex = new BST<String, IBST<Integer, IRide>>();
-        ridesByPickupLocation = new NonUniqueIndexHelper<String, Integer, IRide>(
-                ridesByPickupLocationIndex);
+        ridesByPickupLocation = new NonUniqueIndexHelper<String, Integer, IRide>(ridesByPickupLocationIndex);
 
         ridesByPickupTimeIndex = new BST<IDateTime, IBST<Integer, IRide>>();
-        ridesByPickupTime = new NonUniqueIndexHelper<IDateTime, Integer, IRide>(
-                ridesByPickupTimeIndex);
+        ridesByPickupTime = new NonUniqueIndexHelper<IDateTime, Integer, IRide>(ridesByPickupTimeIndex);
     }
 
     // CSV Load methods
