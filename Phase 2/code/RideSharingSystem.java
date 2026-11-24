@@ -4,35 +4,62 @@ import java.io.IOException;
 
 public class RideSharingSystem implements IRideSharingSystem {
     // Riders
-    IBST<Integer, IRider> ridersByID;
-    IBST<String, IBST<Integer, IRider>> ridersByName;
-    IBST<String, IBST<Integer, IRider>> ridersByCity;
+    private IBST<Integer, IRider> ridersByID;
+
+    private IBST<String, IBST<Integer, IRider>> ridersByNameIndex;
+    private NonUniqueIndexHelper<String, Integer, IRider> ridersByName;
+
+    private IBST<String, IBST<Integer, IRider>> ridersByCityIndex;
+    private NonUniqueIndexHelper<String, Integer, IRider> ridersByCity;
 
     // Drivers
-    IBST<Integer, IDriver> driversByID;
-    IBST<String, IDriver> driversByPlate;
-    IBST<VehicleType, IBST<Integer, IDriver>> driversByType;
+    private IBST<Integer, IDriver> driversByID;
+
+    private IBST<String, IDriver> driversByPlate;
+
+    private IBST<VehicleType, IBST<Integer, IDriver>> driversByTypeIndex;
+    private NonUniqueIndexHelper<VehicleType, Integer, IDriver> driversByType;
 
     // Rides
-    IBST<Integer, IRide> ridesByID;
-    IBST<String, IBST<Integer, IRide>> ridesByPickupLocation;
-    IBST<IDateTime, IBST<Integer, IRide>> ridesByPickupTime;
+    private IBST<Integer, IRide> ridesByID;
+
+    private IBST<String, IBST<Integer, IRide>> ridesByPickupLocationIndex;
+    private NonUniqueIndexHelper<String, Integer, IRide> ridesByPickupLocation;
+
+    private IBST<IDateTime, IBST<Integer, IRide>> ridesByPickupTimeIndex;
+    private NonUniqueIndexHelper<IDateTime, Integer, IRide> ridesByPickupTime;
 
     public RideSharingSystem() {
         // Riders
         ridersByID = new BST<Integer, IRider>();
-        ridersByName = new BST<String, IBST<Integer, IRider>>();
-        ridersByCity = new BST<String, IBST<Integer, IRider>>();
+
+        ridersByNameIndex = new BST<String, IBST<Integer, IRider>>();
+        ridersByName = new NonUniqueIndexHelper<String, Integer, IRider>(
+                ridersByNameIndex);
+
+        ridersByCityIndex = new BST<String, IBST<Integer, IRider>>();
+        ridersByCity = new NonUniqueIndexHelper<String, Integer, IRider>(
+                ridersByCityIndex);
 
         // Drivers
         driversByID = new BST<Integer, IDriver>();
+
         driversByPlate = new BST<String, IDriver>();
-        driversByType = new BST<VehicleType, IBST<Integer, IDriver>>();
+
+        driversByTypeIndex = new BST<VehicleType, IBST<Integer, IDriver>>();
+        driversByType = new NonUniqueIndexHelper<VehicleType, Integer, IDriver>(
+                driversByTypeIndex);
 
         // Rides
         ridesByID = new BST<Integer, IRide>();
-        ridesByPickupLocation = new BST<String, IBST<Integer, IRide>>();
-        ridesByPickupTime = new BST<IDateTime, IBST<Integer, IRide>>();
+
+        ridesByPickupLocationIndex = new BST<String, IBST<Integer, IRide>>();
+        ridesByPickupLocation = new NonUniqueIndexHelper<String, Integer, IRide>(
+                ridesByPickupLocationIndex);
+
+        ridesByPickupTimeIndex = new BST<IDateTime, IBST<Integer, IRide>>();
+        ridesByPickupTime = new NonUniqueIndexHelper<IDateTime, Integer, IRide>(
+                ridesByPickupTimeIndex);
     }
 
     // CSV Load methods
