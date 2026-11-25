@@ -232,34 +232,42 @@ public class RideSharingSystem implements IRideSharingSystem {
             return false;
         }
 
-        LinkedList<IRide> frides = rides.getAllAlphabetically();
-        if (!frides.empty()) {
+        // updating schedules and ride indexes
+        LinkedList<IRide> rides = rider.getSchedule().inOrder();
+        IRide ride;
 
-            frides.findFirst();
+        if (!rides.empty()) {
 
-            while (!frides.last()) {
-                if (frides.retrieve() instanceof PrivateRide && frides.retrieve().hasRider(riderId)) {
-                    rides.removeRideById(frides.retrieve().getRideId());
-                } else if (frides.retrieve() instanceof SharedRide && frides.retrieve().hasRider(riderId)) {
-                    ((SharedRide) frides.retrieve()).removeParticipantById(riderId);
-                    if (((SharedRide) frides.retrieve()).isEmpty()) {
-                        rides.removeRideById(frides.retrieve().getRideId());
+            rides.findFirst();
+
+            while (!rides.last()) {
+                ride = rides.retrieve();
+                if (ride instanceof IPrivateRide) {
+                    cancelRide(ride.getRideId());
+                } else if (ride instanceof ISharedRide) {
+                    ((ISharedRide) ride).removeParticipantById(riderId);
+                    if (((ISharedRide) ride).isEmpty()) {
+                        cancelRide(ride.getRideId());
                     }
                 }
 
-                frides.findNext();
+                rides.findNext();
             }
-
-            if (frides.retrieve() instanceof PrivateRide && frides.retrieve().hasRider(riderId)) {
-                rides.removeRideById(frides.retrieve().getRideId());
-            } else if (frides.retrieve() instanceof SharedRide && frides.retrieve().hasRider(riderId)) {
-                ((SharedRide) frides.retrieve()).removeParticipantById(riderId);
-                if (((SharedRide) frides.retrieve()).isEmpty()) {
-                    rides.removeRideById(frides.retrieve().getRideId());
+            ride = rides.retrieve();
+            if (ride instanceof IPrivateRide) {
+                cancelRide(ride.getRideId());
+            } else if (ride instanceof ISharedRide) {
+                ((ISharedRide) ride).removeParticipantById(riderId);
+                if (((ISharedRide) ride).isEmpty()) {
+                    cancelRide(ride.getRideId());
                 }
             }
         }
-        riders.removeById(riderId);
+
+        // updating rider indexes
+        ridersByID.removeKey(riderId);
+        ridersByCity.remove(rider.getHomeCity(), riderId);
+        ridersByName.remove(rider.getName(), riderId);
 
         return true;
     }
@@ -294,22 +302,21 @@ public class RideSharingSystem implements IRideSharingSystem {
             return false;
         }
 
-        LinkedList<IRide> frides = rides.getAllAlphabetically();
-        if (!frides.empty()) {
-            frides.findFirst();
-            while (!frides.last()) {
-                if (frides.retrieve().getDriver().getId() == driverId) {
-                    rides.removeRideById(frides.retrieve().getRideId());
+        LinkedList<IRide> rides = driver.getSchedule().inOrder();
 
-                }
-                frides.findNext();
+        if (!rides.empty()) {
+            rides.findFirst();
+            while (!rides.last()) {
+                cancelRide(rides.retrieve().getRideId());
+                rides.findNext();
             }
-            if (frides.retrieve().getDriver().getId() == driverId) {
-                rides.removeRideById(frides.retrieve().getRideId());
-            }
+            cancelRide(rides.retrieve().getRideId());
+
         }
 
-        drivers.removeById(driverId);
+        driversByID.removeKey(driverId);
+        driversByType.remove(driver.getVehicleType(), driverId);
+        driversByPlate.removeKey(driver.getVehiclePlate());
 
         return true;
     }
@@ -425,11 +432,12 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public LinkedList<IRide> searchRidesByPickupLocation(String pickupLocation) {
-        return rides.findByPickupLocation(pickupLocation);
+        return ridesByPickupLocation.get(pickupLocation).inOrder();
     }
 
     @Override
     public LinkedList<IRide> searchRidesByRiderName(String riderName) {
+
         return rides.findByRiderName(riderName);
     }
 
