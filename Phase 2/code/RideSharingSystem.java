@@ -177,8 +177,7 @@ public class RideSharingSystem implements IRideSharingSystem {
                         rideId = scheduleSharedRide(data[1], data[4], timeSlot, ridersIds, driverId);
                     } else if (data[0].equals("PRIVATE")) {
                         rideId = schedulePrivateRide(data[1], data[4], timeSlot, Integer.parseInt(data[6]), driverId);
-                    }
-                    else {
+                    } else {
                         rideId = -1;
                     }
 
@@ -323,7 +322,8 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider = searchRiderById(riderId);
 
-        if (pickupLocation == null || dropoffLocation == null || driver == null || rider == null || timeSlot == null || rider.getSchedule().findKey(timeSlot) || driver.getSchedule().findKey(timeSlot)) {
+        if (pickupLocation == null || dropoffLocation == null || driver == null || rider == null || timeSlot == null
+                || rider.getSchedule().findKey(timeSlot) || driver.getSchedule().findKey(timeSlot)) {
             return -1;
         }
         // id starts from 1
@@ -334,7 +334,7 @@ public class RideSharingSystem implements IRideSharingSystem {
         ridesByPickupLocation.add(pickupLocation, ridesIDCounter, ride);
         ridesByPickupTime.add(timeSlot.getStart(), ridesIDCounter, ride);
 
-        // updating schedules 
+        // updating schedules
         driver.getSchedule().insert(timeSlot, ride);
         rider.getSchedule().insert(timeSlot, ride);
 
@@ -347,7 +347,8 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider;
 
-        if (pickupLocation == null || dropoffLocation == null || riderIds == null || riderIds.length < 2 || driver == null || timeSlot == null || driver.getSchedule().findKey(timeSlot)) {
+        if (pickupLocation == null || dropoffLocation == null || riderIds == null || riderIds.length < 2
+                || driver == null || timeSlot == null || driver.getSchedule().findKey(timeSlot)) {
             return -1;
         }
 
@@ -376,13 +377,50 @@ public class RideSharingSystem implements IRideSharingSystem {
         ridesByPickupLocation.add(pickupLocation, ridesIDCounter, ride);
         ridesByPickupTime.add(timeSlot.getStart(), ridesIDCounter, ride);
 
-        return ridesIDCounter;       
+        return ridesIDCounter;
     }
 
     @Override
     public boolean cancelRide(int rideId) {
-        // TODO Auto-generated method stub
-        return false;
+        // check that ride exist
+        if (!ridesByID.findKey(rideId)) {
+            return false;
+        }
+
+        IRide ride = ridesByID.retrieve();
+        ITimeSlot timeSlot = ride.getTimeSlot();
+        IRider rider;
+        LinkedList<IRider> riders;
+        IDriver driver = ride.getDriver();
+
+        // remove from schedules
+        driver.getSchedule().removeKey(timeSlot);
+
+        if (ride instanceof PrivateRide) {
+            rider = ((PrivateRide) ride).getRider();
+            rider.getSchedule().removeKey(timeSlot);
+        } else if (ride instanceof SharedRide) {
+            riders = ((SharedRide) ride).getParticipants();
+
+            if (!riders.empty()) {
+                riders.findFirst();
+                while (!riders.last()) {
+                    rider = riders.retrieve();
+                    rider.getSchedule().removeKey(timeSlot);
+                    riders.findNext();
+                }
+
+                rider = riders.retrieve();
+                rider.getSchedule().removeKey(timeSlot);
+            }
+        }
+
+        // remove from indexes
+        ridesByID.removeKey(rideId);
+        ridesByPickupLocation.remove(ride.getPickupLocation(), rideId);
+        ridesByPickupTime.remove(timeSlot.getStart(), rideId);
+
+        return true;
     }
 
     @Override
