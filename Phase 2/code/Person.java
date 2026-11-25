@@ -1,7 +1,7 @@
 public abstract class Person implements IPerson {
     private String name;
     private String phoneNumber;
-    private LinkedList<IRide> rideHistory = new LinkedList<IRide>();
+    private IBST<ITimeSlot, IRide> schedule = new BST<ITimeSlot, IRide>();
     private int id;
 
     public Person(int id, String name, String phoneNumber) {
@@ -16,10 +16,6 @@ public abstract class Person implements IPerson {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPhoneNumber() {
@@ -40,11 +36,9 @@ public abstract class Person implements IPerson {
         this.phoneNumber = phoneNumber;
     }
 
-    public LinkedList<IRide> getRideHistory() {
-
-        return rideHistory;
+    public IBST<ITimeSlot , IRide> getSchedule() {
+        return schedule;
     }
-
     public String toString() {
         return "ID: " + getId() + ", Name: " + getName() + ", Phone: " + getPhoneNumber();
     }
