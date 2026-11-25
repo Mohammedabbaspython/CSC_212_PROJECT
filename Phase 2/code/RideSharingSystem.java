@@ -3,49 +3,41 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RideSharingSystem implements IRideSharingSystem {
+    // Riders
+    IBST<Integer, IRider> ridersByID;
+    IBST<String, IBST<Integer, IRider>> ridersByName;
+    IBST<String, IBST<Integer, IRider>> ridersByCity;
 
-    private IRideList rides;
-    private IDriverList drivers;
-    private IRiderList riders;
+    // Drivers
+    IBST<Integer, IDriver> driversByID;
+    IBST<String, IDriver> driversByPlate;
+    IBST<VehicleType, IBST<Integer, IDriver>> driversByType;
+
+    // Rides
+    IBST<Integer, IRide> ridesByID;
+    IBST<String, IBST<Integer, IRide>> ridesByPickupLocation;
+    IBST<IDateTime, IBST<Integer, IRide>> ridesByPickupTime;
 
     public RideSharingSystem() {
-        rides = new RideList();
-        drivers = new DriverList();
-        riders = new RiderList();
+        // Riders
+        ridersByID = new BST<Integer, IRider>();
+        ridersByName = new BST<String, IBST<Integer, IRider>>();
+        ridersByCity = new BST<String, IBST<Integer, IRider>>();
+
+        // Drivers
+        driversByID = new BST<Integer, IDriver>();
+        driversByPlate = new BST<String, IDriver>();
+        driversByType = new BST<VehicleType, IBST<Integer, IDriver>>();
+
+        // Rides
+        ridesByID = new BST<Integer, IRide>();
+        ridesByPickupLocation = new BST<String, IBST<Integer, IRide>>();
+        ridesByPickupTime = new BST<IDateTime, IBST<Integer, IRide>>();
     }
 
+    // CSV Load methods
     @Override
-    public boolean addRider(IRider rider) {
-        return riders.add(rider);
-    }
-
-    @Override
-    public IRider searchRiderById(int riderId) {
-        return riders.findById(riderId);
-    }
-
-    @Override
-    public IRider searchRiderByEmail(String Email) {
-        return riders.findByEmail(Email);
-    }
-
-    @Override
-    public LinkedList<IRider> searchRidersByName(String fullName) {
-        return riders.findByName(fullName);
-    }
-
-    @Override
-    public LinkedList<IRider> searchRidersByHomeCity(String homeCity) {
-        return riders.findByHomeCity(homeCity);
-    }
-
-    @Override
-    public LinkedList<IRider> getAllRiders() {
-        return riders.getAll();
-    }
-
-    @Override
-    public boolean loadRidersFromCSV(String ridersFilePath) {
+    public int loadRidersFromCSV(String ridersFilePath) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(ridersFilePath));
 
@@ -67,7 +59,7 @@ public class RideSharingSystem implements IRideSharingSystem {
     }
 
     @Override
-    public boolean loadDriversFromCSV(String driversFilePath) {
+    public int loadDriversFromCSV(String driversFilePath) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(driversFilePath));
 
@@ -117,7 +109,7 @@ public class RideSharingSystem implements IRideSharingSystem {
     }
 
     @Override
-    public boolean loadRidesFromCSV(String ridesFilePath) {
+    public int loadRidesFromCSV(String ridesFilePath) {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(ridesFilePath));
@@ -164,26 +156,30 @@ public class RideSharingSystem implements IRideSharingSystem {
         }
     }
 
+    // Rider methods
     @Override
-    public IDriver searchDriverById(int driverId) {
-        return drivers.findById(driverId);
+    public boolean addRider(IRider rider) {
+        return riders.add(rider);
     }
 
     @Override
-    public IDriver searchDriverByVehiclePlate(String vehiclePlate) {
-        return drivers.findByVehiclePlate(vehiclePlate);
+    public IRider searchRiderById(int riderId) {
+        return riders.findById(riderId);
     }
 
     @Override
-    public LinkedList<IDriver> searchDriversByVehicleType(VehicleType vehicleType) {
-        return drivers.findByVehicleType(vehicleType);
-
+    public LinkedList<IRider> searchRidersByName(String fullName) {
+        return riders.findByName(fullName);
     }
 
     @Override
-    public LinkedList<IDriver> getAllDrivers() {
-        return drivers.getAll();
+    public LinkedList<IRider> searchRidersByHomeCity(String homeCity) {
+        return riders.findByHomeCity(homeCity);
+    }
 
+    @Override
+    public LinkedList<IRider> getAllRiders() {
+        return riders.getAll();
     }
 
     @Override
@@ -225,6 +221,29 @@ public class RideSharingSystem implements IRideSharingSystem {
         return true;
     }
 
+    // Driver methods
+    @Override
+    public boolean addDriver(IDriver driver) {
+        return drivers.add(driver);
+    }
+
+    @Override
+    public IDriver searchDriverById(int driverId) {
+        return drivers.findById(driverId);
+    }
+
+    @Override
+    public LinkedList<IDriver> searchDriversByVehicleType(VehicleType vehicleType) {
+        return drivers.findByVehicleType(vehicleType);
+
+    }
+
+    @Override
+    public LinkedList<IDriver> getAllDrivers() {
+        return drivers.getAll();
+
+    }
+
     @Override
     public boolean removeDriver(int driverId) {
         IDriver driver = searchDriverById(driverId);
@@ -252,9 +271,10 @@ public class RideSharingSystem implements IRideSharingSystem {
         return true;
     }
 
+    // Ride methods
     @Override
-    public boolean schedulePrivateRide(String pickupLocation, IDateTime pickupTime, IDateTime dropoffTime,
-            String dropoffLocation, int riderId, int driverId) {
+    public int schedulePrivateRide(String pickupLocation, String dropoffLocation, ITimeSlot timeSlot, int riderId,
+            int driverId) {
 
         IDriver driver = searchDriverById(driverId);
         IRider rider = searchRiderById(riderId);
@@ -276,8 +296,8 @@ public class RideSharingSystem implements IRideSharingSystem {
     }
 
     @Override
-    public boolean scheduleSharedRide(String pickupLocation, IDateTime pickupTime, IDateTime dropoffTime,
-            String dropoffLocation, int[] riderIds, int driverId) {
+    public int scheduleSharedRide(String pickupLocation, String dropoffLocation, ITimeSlot timeSlot, int[] riderIds,
+            int driverId) {
         IDriver driver = searchDriverById(driverId);
         IRider rider;
 
@@ -310,6 +330,12 @@ public class RideSharingSystem implements IRideSharingSystem {
     }
 
     @Override
+    public boolean cancelRide(int rideId) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
     public LinkedList<IRide> searchRidesByPickupLocation(String pickupLocation) {
         return rides.findByPickupLocation(pickupLocation);
     }
@@ -320,7 +346,7 @@ public class RideSharingSystem implements IRideSharingSystem {
     }
 
     @Override
-    public LinkedList<IRider> getSharedRideParticipants(String pickupLocation) {
+    public LinkedList<IRider> getSharedRideParticipants(int rideId) {
         LinkedList<IRide> frides = searchRidesByPickupLocation(pickupLocation);
 
         LinkedList<IRider> tmpRiders = new LinkedList<IRider>();
@@ -371,8 +397,34 @@ public class RideSharingSystem implements IRideSharingSystem {
     }
 
     @Override
-    public boolean addDriver(IDriver driver) {
-        return drivers.add(driver);
+    public LinkedList<IRide> searchRidesByPickupTimeRange(IDateTime from, IDateTime to) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LinkedList<IDriver> findAvailableDrivers(ITimeSlot timeSlot, VehicleType vehicleType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    // tree statistics
+    @Override
+    public int nbKeyCompRiderById(int riderId) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int indexSize(IndexName index) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int indexHeight(IndexName index) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     // helper methods

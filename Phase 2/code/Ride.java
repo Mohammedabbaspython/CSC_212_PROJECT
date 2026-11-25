@@ -1,6 +1,5 @@
 public abstract class Ride implements IRide {
-    protected IDateTime pickupDateTime;
-    protected IDateTime dropoffDateTime;
+    protected ITimeSlot timeSlot;
 
     protected String pickupLocation;
     protected String dropoffLocation;
@@ -9,26 +8,19 @@ public abstract class Ride implements IRide {
 
     protected int rideId;
 
-    protected static int rideCount;
 
-    public Ride(IDateTime pickupDateTime, IDateTime dropoffDateTime, String pickupLocation, String dropoffLocation,
-            IDriver driver) {
-        this.pickupDateTime = pickupDateTime;
-        this.dropoffDateTime = dropoffDateTime;
+    public Ride(int rideId, String pickupLocation, String dropoffLocation, ITimeSlot timeSlot, IDriver driver) {
+        this.timeSlot = timeSlot;
         this.pickupLocation = pickupLocation;
         this.dropoffLocation = dropoffLocation;
         this.driver = driver;
 
-        rideId = rideCount++;
+        this.rideId = rideId;
     }
 
     // getters
-    public IDateTime getPickupTime() {
-        return pickupDateTime;
-    }
-
-    public IDateTime getDropoffTime() {
-        return dropoffDateTime;
+    public ITimeSlot getTimeSlot() {
+        return timeSlot;
     }
 
     public String getPickupLocation() {
@@ -46,32 +38,16 @@ public abstract class Ride implements IRide {
     public int getRideId() {
         return rideId;
     }
-
-    // setters
-    public void setPickupLocation(String pickupLocation) {
-        this.pickupLocation = pickupLocation;
-    }
-
-    public void setDropoffLocation(String dropoffLocation) {
-        this.dropoffLocation = dropoffLocation;
-    }
-
-    public void setDriver(IDriver driver) {
-        this.driver = driver;
-    }
-
-    abstract public boolean hasRiderByFullName(String riderFullName);
     
     // toString()
     @Override
     public String toString() {
-        return "Ride [pickupDateTime=" + pickupDateTime + ", dropoffDateTime=" + dropoffDateTime + ", pickupLocation="
-                + pickupLocation + ", dropoffLocation=" + dropoffLocation + ", driver=" + driver
-                + ", rideId=" + rideId + "]";
+        return "Ride [rideId=" + rideId + ", pickupDateTime=" + timeSlot.getStart() + ", dropoffDateTime=" + timeSlot.getEnd() + ", pickupLocation="
+                + pickupLocation + ", dropoffLocation=" + dropoffLocation + ", driver=" + driver + "]";
     }
 
     @Override
     public int compareTo(IRide other) {
-        return this.getPickupLocation().compareTo(other.getPickupLocation());
+        return Integer.compare(rideId, other.getRideId());
     }
 }

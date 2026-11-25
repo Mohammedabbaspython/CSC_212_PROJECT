@@ -44,6 +44,9 @@ public class BST<K extends Comparable<K>, T> implements IBST<K, T> {
     }
 
     public T retrieve() {
+        if (empty()) {
+            return null;
+        }
         return current.data;
     }
 
