@@ -432,13 +432,60 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public LinkedList<IRide> searchRidesByPickupLocation(String pickupLocation) {
-        return ridesByPickupLocation.get(pickupLocation).inOrder();
+        IBST<Integer, IRide> rides = ridesByPickupLocation.get(pickupLocation);
+        if (rides == null) {
+            return new LinkedList<IRide>();
+        }
+        return rides.inOrder();
     }
 
     @Override
     public LinkedList<IRide> searchRidesByRiderName(String riderName) {
+        IBST<Integer, IRide> rides = new BST<Integer, IRide>();
 
-        return rides.findByRiderName(riderName);
+        IBST<Integer, IRider> ridersBST = ridersByName.get(riderName);
+        
+        if (ridersBST == null) {
+            return rides.inOrder();
+        } 
+
+        LinkedList<IRider> riders = ridersBST.inOrder();
+        LinkedList<IRide> riderSchedule;
+        IRide ride;
+
+        if (riders.empty()) {
+            return rides.inOrder();
+        }
+
+        riders.findFirst();
+        while (!riders.last()) {
+            riderSchedule = riders.retrieve().getSchedule().inOrder();
+            if (!riderSchedule.empty()) {
+                riderSchedule.findFirst();
+                while (!riderSchedule.last()) {
+                    ride = riderSchedule.retrieve();
+                    rides.insert(ride.getRideId(), ride);
+                    riderSchedule.findNext();
+                }
+                ride = riderSchedule.retrieve();
+                rides.insert(ride.getRideId(), ride);
+            }
+            riders.findNext();
+        }
+
+        riderSchedule = riders.retrieve().getSchedule().inOrder();
+        if (!riderSchedule.empty()) {
+            riderSchedule.findFirst();
+            while (!riderSchedule.last()) {
+                ride = riderSchedule.retrieve();
+                rides.insert(ride.getRideId(), ride);
+                riderSchedule.findNext();
+            }
+            ride = riderSchedule.retrieve();
+            rides.insert(ride.getRideId(), ride);
+        }
+
+        return rides.inOrder();
     }
 
     @Override
