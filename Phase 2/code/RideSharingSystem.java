@@ -4,98 +4,134 @@ import java.io.IOException;
 
 public class RideSharingSystem implements IRideSharingSystem {
     // Riders
-    IBST<Integer, IRider> ridersByID;
-    IBST<String, IBST<Integer, IRider>> ridersByName;
-    IBST<String, IBST<Integer, IRider>> ridersByCity;
+    private IBST<Integer, IRider> ridersByID;
+
+    private IBST<String, IBST<Integer, IRider>> ridersByNameIndex;
+    private NonUniqueIndexHelper<String, Integer, IRider> ridersByName;
+
+    private IBST<String, IBST<Integer, IRider>> ridersByCityIndex;
+    private NonUniqueIndexHelper<String, Integer, IRider> ridersByCity;
 
     // Drivers
-    IBST<Integer, IDriver> driversByID;
-    IBST<String, IDriver> driversByPlate;
-    IBST<VehicleType, IBST<Integer, IDriver>> driversByType;
+    private IBST<Integer, IDriver> driversByID;
+
+    private IBST<String, IDriver> driversByPlate;
+
+    private IBST<VehicleType, IBST<Integer, IDriver>> driversByTypeIndex;
+    private NonUniqueIndexHelper<VehicleType, Integer, IDriver> driversByType;
 
     // Rides
-    IBST<Integer, IRide> ridesByID;
-    IBST<String, IBST<Integer, IRide>> ridesByPickupLocation;
-    IBST<IDateTime, IBST<Integer, IRide>> ridesByPickupTime;
+    private IBST<Integer, IRide> ridesByID;
+
+    private IBST<String, IBST<Integer, IRide>> ridesByPickupLocationIndex;
+    private NonUniqueIndexHelper<String, Integer, IRide> ridesByPickupLocation;
+
+    private IBST<IDateTime, IBST<Integer, IRide>> ridesByPickupTimeIndex;
+    private NonUniqueIndexHelper<IDateTime, Integer, IRide> ridesByPickupTime;
+
+    private int ridesIDCounter;
 
     public RideSharingSystem() {
         // Riders
         ridersByID = new BST<Integer, IRider>();
-        ridersByName = new BST<String, IBST<Integer, IRider>>();
-        ridersByCity = new BST<String, IBST<Integer, IRider>>();
+
+        ridersByNameIndex = new BST<String, IBST<Integer, IRider>>();
+        ridersByName = new NonUniqueIndexHelper<String, Integer, IRider>(ridersByNameIndex);
+
+        ridersByCityIndex = new BST<String, IBST<Integer, IRider>>();
+        ridersByCity = new NonUniqueIndexHelper<String, Integer, IRider>(ridersByCityIndex);
 
         // Drivers
         driversByID = new BST<Integer, IDriver>();
+
         driversByPlate = new BST<String, IDriver>();
-        driversByType = new BST<VehicleType, IBST<Integer, IDriver>>();
+
+        driversByTypeIndex = new BST<VehicleType, IBST<Integer, IDriver>>();
+        driversByType = new NonUniqueIndexHelper<VehicleType, Integer, IDriver>(driversByTypeIndex);
 
         // Rides
         ridesByID = new BST<Integer, IRide>();
-        ridesByPickupLocation = new BST<String, IBST<Integer, IRide>>();
-        ridesByPickupTime = new BST<IDateTime, IBST<Integer, IRide>>();
+
+        ridesByPickupLocationIndex = new BST<String, IBST<Integer, IRide>>();
+        ridesByPickupLocation = new NonUniqueIndexHelper<String, Integer, IRide>(ridesByPickupLocationIndex);
+
+        ridesByPickupTimeIndex = new BST<IDateTime, IBST<Integer, IRide>>();
+        ridesByPickupTime = new NonUniqueIndexHelper<IDateTime, Integer, IRide>(ridesByPickupTimeIndex);
+
+        ridesIDCounter = 0;
     }
 
     // CSV Load methods
     @Override
     public int loadRidersFromCSV(String ridersFilePath) {
+        int count = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(ridersFilePath));
 
             String line = br.readLine();
 
             while (line != null) {
-                String[] data = line.split(",");
+                try {
+                    String[] data = line.split(",");
+                    if (addRider(new Rider(Integer.parseInt(data[0]), data[1], data[2], data[3], data[4]))) {
+                        count++;
+                    }
 
-                riders.add(new Rider(Integer.parseInt(data[0]), data[1], data[3], data[2], data[4]));
+                } catch (Exception e) {
+                    // skip faulty line
+                }
 
                 line = br.readLine();
             }
             br.close();
 
         } catch (IOException e) {
-            return false;
+            return -1;
         }
-        return true;
+        return count;
     }
 
     @Override
     public int loadDriversFromCSV(String driversFilePath) {
+        int count = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(driversFilePath));
 
             String line = br.readLine();
 
             while (line != null) {
-                String[] data = line.split(",");
-                VehicleType vType;
-
-                switch (data[4]) {
-                    case "SEDAN":
-                        vType = VehicleType.SEDAN;
-                        break;
-
-                    case "LUXURY_SEDAN":
-                        vType = VehicleType.LUXURY_SEDAN;
-                        break;
-
-                    case "SUV":
-                        vType = VehicleType.SUV;
-                        break;
-
-                    case "VAN":
-                        vType = VehicleType.VAN;
-                        break;
-
-                    default:
-                        return false;
-                }
 
                 try {
-                    drivers.add(new Driver(Integer.parseInt(data[0]), data[1], data[2], data[3], vType));
+                    String[] data = line.split(",");
+                    VehicleType vType;
 
-                } catch (IllegalArgumentException e) {
-                    br.close();
-                    return false;
+                    switch (data[4]) {
+                        case "SEDAN":
+                            vType = VehicleType.SEDAN;
+                            break;
+
+                        case "LUXURY_SEDAN":
+                            vType = VehicleType.LUXURY_SEDAN;
+                            break;
+
+                        case "SUV":
+                            vType = VehicleType.SUV;
+                            break;
+
+                        case "VAN":
+                            vType = VehicleType.VAN;
+                            break;
+
+                        default:
+                            vType = null;
+                    }
+
+                    if (addDriver(new Driver(Integer.parseInt(data[0]), data[1], data[2], data[3], vType))) {
+                        count++;
+                    }
+
+                } catch (Exception e) {
+                    // skip faulty line
                 }
 
                 line = br.readLine();
@@ -103,56 +139,64 @@ public class RideSharingSystem implements IRideSharingSystem {
             br.close();
 
         } catch (IOException e) {
-            return false;
+            return -1;
         }
-        return true;
+
+        return count;
     }
 
     @Override
     public int loadRidesFromCSV(String ridesFilePath) {
-
+        int count = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(ridesFilePath));
 
             String line = br.readLine();
             IDateTime pickupDateTime, dropoffDateTime;
+            ITimeSlot timeSlot;
+            int rideId;
 
             while (line != null) {
-                String[] data = line.split(",");
 
                 try {
+                    String[] data = line.split(",");
+
                     pickupDateTime = new DateTime(data[2]);
                     dropoffDateTime = new DateTime(data[3]);
-                } catch (IllegalArgumentException e) {
-                    br.close();
-                    return false;
-                }
-                int driverId = Integer.parseInt(data[5]);
+                    timeSlot = new TimeSlot(pickupDateTime, dropoffDateTime);
 
-                if (data[0].equals("SHARED")) {
-                    String[] ridersIdsRow = data[6].split(";");
-                    int[] ridersIds = new int[ridersIdsRow.length];
-                    for (int i = 0; i < ridersIdsRow.length; i++) {
-                        ridersIds[i] = Integer.parseInt(ridersIdsRow[i]);
+                    int driverId = Integer.parseInt(data[5]);
+
+                    if (data[0].equals("SHARED")) {
+                        String[] ridersIdsRow = data[6].split(";");
+                        int[] ridersIds = new int[ridersIdsRow.length];
+                        for (int i = 0; i < ridersIdsRow.length; i++) {
+                            ridersIds[i] = Integer.parseInt(ridersIdsRow[i]);
+                        }
+
+                        rideId = scheduleSharedRide(data[1], data[4], timeSlot, ridersIds, driverId);
+                    } else if (data[0].equals("PRIVATE")) {
+                        rideId = schedulePrivateRide(data[1], data[4], timeSlot, Integer.parseInt(data[6]), driverId);
+                    }
+                    else {
+                        rideId = -1;
                     }
 
-                    scheduleSharedRide(data[1], pickupDateTime, dropoffDateTime, data[4], ridersIds, driverId);
-                } else if (data[0].equals("PRIVATE")) {
-                    schedulePrivateRide(data[1], pickupDateTime, dropoffDateTime, data[4], Integer.parseInt(data[6]),
-                            driverId);
-                } else {
-                    br.close();
-                    return false;
+                    if (rideId != -1) {
+                        count++;
+                    }
+                } catch (Exception e) {
+                    // skip faulty line
                 }
 
                 line = br.readLine();
             }
 
             br.close();
-            return true;
+            return count;
 
         } catch (IOException e) {
-            return false;
+            return -1;
         }
     }
 
@@ -279,20 +323,22 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider = searchRiderById(riderId);
 
-        if (driver == null || rider == null || pickupTime.compareTo(dropoffTime) >= 0
-                || riderHasRideConflict(pickupTime, dropoffTime, riderId)
-                || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
-            return false;
+        if (pickupLocation == null || dropoffLocation == null || driver == null || rider == null || timeSlot == null || rider.getSchedule().findKey(timeSlot) || driver.getSchedule().findKey(timeSlot)) {
+            return -1;
         }
+        // id starts from 1
+        IRide ride = new PrivateRide(++ridesIDCounter, pickupLocation, dropoffLocation, timeSlot, rider, driver);
 
-        IRide ride = new PrivateRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver, rider);
+        // adding to ride BSTs
+        ridesByID.insert(ridesIDCounter, ride);
+        ridesByPickupLocation.add(pickupLocation, ridesIDCounter, ride);
+        ridesByPickupTime.add(timeSlot.getStart(), ridesIDCounter, ride);
 
-        rides.addRide(ride);
+        // updating schedules 
+        driver.getSchedule().insert(timeSlot, ride);
+        rider.getSchedule().insert(timeSlot, ride);
 
-        driver.getRideHistory().insert(ride);
-        rider.getRideHistory().insert(ride);
-
-        return true;
+        return ridesIDCounter;
     }
 
     @Override
@@ -301,32 +347,36 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider;
 
-        if (driver == null || pickupTime.compareTo(dropoffTime) >= 0
-                || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
-            return false;
+        if (pickupLocation == null || dropoffLocation == null || riderIds == null || riderIds.length < 2 || driver == null || timeSlot == null || driver.getSchedule().findKey(timeSlot)) {
+            return -1;
         }
 
-        SharedRide ride = new SharedRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver);
+        SharedRide ride = new SharedRide(ridesIDCounter + 1, pickupLocation, dropoffLocation, timeSlot, driver);
 
         for (int riderid : riderIds) {
             rider = searchRiderById(riderid);
-            if (rider == null || riderHasRideConflict(pickupTime, dropoffTime, riderid)) {
-                return false;
+            if (rider == null || rider.getSchedule().findKey(timeSlot) || !ride.addParticipant(rider)) {
+                return -1;
             }
-
-            ride.addParticipant(rider);
         }
 
+        // updating schedules
         for (int riderid : riderIds) {
             rider = searchRiderById(riderid);
 
-            rider.getRideHistory().insert(ride);
+            rider.getSchedule().insert(timeSlot, ride);
         }
 
-        driver.getRideHistory().insert(ride);
+        driver.getSchedule().insert(timeSlot, ride);
 
-        rides.addRide(ride);
-        return true;
+        ridesIDCounter++;
+
+        // adding to ride BSTs
+        ridesByID.insert(ridesIDCounter, ride);
+        ridesByPickupLocation.add(pickupLocation, ridesIDCounter, ride);
+        ridesByPickupTime.add(timeSlot.getStart(), ridesIDCounter, ride);
+
+        return ridesIDCounter;       
     }
 
     @Override
@@ -425,63 +475,6 @@ public class RideSharingSystem implements IRideSharingSystem {
     public int indexHeight(IndexName index) {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    // helper methods
-    private boolean rideOverlaps(IDateTime pickupDateTime, IDateTime dropoffDateTime, IRide other) {
-        if (pickupDateTime.compareTo(other.getDropoffTime()) < 0
-                && other.getPickupTime().compareTo(dropoffDateTime) < 0) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean riderHasRideConflict(IDateTime pickupDateTime, IDateTime dropoffDateTime, int riderId) {
-        LinkedList<IRide> allRides = getAllRidesAlphabetically();
-
-        if (allRides.empty()) {
-            return false;
-        }
-
-        allRides.findFirst();
-
-        while (!allRides.last()) {
-            if (allRides.retrieve().hasRider(riderId)
-                    && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {
-                return true;
-            }
-            allRides.findNext();
-        }
-
-        if (allRides.retrieve().hasRider(riderId)
-                && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean driverHasRideConflict(IDateTime pickupDateTime, IDateTime dropoffDateTime, int driverId) {
-        LinkedList<IRide> allRides = getAllRidesAlphabetically();
-
-        if (allRides.empty()) {
-            return false;
-        }
-
-        allRides.findFirst();
-
-        while (!allRides.last()) {
-            if (allRides.retrieve().getDriver().getId() == driverId
-                    && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {
-                return true;
-            }
-            allRides.findNext();
-        }
-        if (allRides.retrieve().getDriver().getId() == driverId
-                && rideOverlaps(pickupDateTime, dropoffDateTime, allRides.retrieve())) {
-            return true;
-        }
-        return false;
     }
 
 }
