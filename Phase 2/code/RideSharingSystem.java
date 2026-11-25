@@ -29,7 +29,7 @@ public class RideSharingSystem implements IRideSharingSystem {
     private IBST<IDateTime, IBST<Integer, IRide>> ridesByPickupTimeIndex;
     private NonUniqueIndexHelper<IDateTime, Integer, IRide> ridesByPickupTime;
 
-    private int numRides;
+    private int ridesIDCounter;
 
     public RideSharingSystem() {
         // Riders
@@ -58,7 +58,7 @@ public class RideSharingSystem implements IRideSharingSystem {
         ridesByPickupTimeIndex = new BST<IDateTime, IBST<Integer, IRide>>();
         ridesByPickupTime = new NonUniqueIndexHelper<IDateTime, Integer, IRide>(ridesByPickupTimeIndex);
 
-        numRides = 0;
+        ridesIDCounter = 0;
     }
 
     // CSV Load methods
@@ -323,20 +323,22 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider = searchRiderById(riderId);
 
-        if (driver == null || rider == null || pickupTime.compareTo(dropoffTime) >= 0
-                || riderHasRideConflict(pickupTime, dropoffTime, riderId)
-                || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
-            return false;
+        if (pickupLocation == null || dropoffLocation == null || driver == null || rider == null || timeSlot == null || rider.getSchedule().findKey(timeSlot) || driver.getSchedule().findKey(timeSlot)) {
+            return -1;
         }
+        // id starts from 1
+        IRide ride = new PrivateRide(++ridesIDCounter, pickupLocation, dropoffLocation, timeSlot, rider, driver);
 
-        IRide ride = new PrivateRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver, rider);
+        // adding to ride BSTs
+        ridesByID.insert(ridesIDCounter, ride);
+        ridesByPickupLocation.add(pickupLocation, ridesIDCounter, ride);
+        ridesByPickupTime.add(timeSlot.getStart(), ridesIDCounter, ride);
 
-        rides.addRide(ride);
+        // updating schedules 
+        driver.getSchedule().insert(timeSlot, ride);
+        rider.getSchedule().insert(timeSlot, ride);
 
-        driver.getRideHistory().insert(ride);
-        rider.getRideHistory().insert(ride);
-
-        return true;
+        return ridesIDCounter;
     }
 
     @Override
@@ -345,32 +347,36 @@ public class RideSharingSystem implements IRideSharingSystem {
         IDriver driver = searchDriverById(driverId);
         IRider rider;
 
-        if (driver == null || pickupTime.compareTo(dropoffTime) >= 0
-                || driverHasRideConflict(pickupTime, dropoffTime, driverId)) {
-            return false;
+        if (pickupLocation == null || dropoffLocation == null || riderIds == null || riderIds.length < 2 || driver == null || timeSlot == null || driver.getSchedule().findKey(timeSlot)) {
+            return -1;
         }
 
-        SharedRide ride = new SharedRide(pickupTime, dropoffTime, pickupLocation, dropoffLocation, driver);
+        SharedRide ride = new SharedRide(ridesIDCounter + 1, pickupLocation, dropoffLocation, timeSlot, driver);
 
         for (int riderid : riderIds) {
             rider = searchRiderById(riderid);
-            if (rider == null || riderHasRideConflict(pickupTime, dropoffTime, riderid)) {
-                return false;
+            if (rider == null || rider.getSchedule().findKey(timeSlot) || !ride.addParticipant(rider)) {
+                return -1;
             }
-
-            ride.addParticipant(rider);
         }
 
+        // updating schedules
         for (int riderid : riderIds) {
             rider = searchRiderById(riderid);
 
-            rider.getRideHistory().insert(ride);
+            rider.getSchedule().insert(timeSlot, ride);
         }
 
-        driver.getRideHistory().insert(ride);
+        driver.getSchedule().insert(timeSlot, ride);
 
-        rides.addRide(ride);
-        return true;
+        ridesIDCounter++;
+
+        // adding to ride BSTs
+        ridesByID.insert(ridesIDCounter, ride);
+        ridesByPickupLocation.add(pickupLocation, ridesIDCounter, ride);
+        ridesByPickupTime.add(timeSlot.getStart(), ridesIDCounter, ride);
+
+        return ridesIDCounter;       
     }
 
     @Override
