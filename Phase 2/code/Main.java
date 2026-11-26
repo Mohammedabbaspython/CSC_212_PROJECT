@@ -7,9 +7,9 @@ public class Main {
 
     public static void main(String args[]) {
         // loading
-        rideSystem.loadDriversFromCSV("Phase 1/drivers_30.csv");
-        rideSystem.loadRidersFromCSV("Phase 1/riders_100.csv");
-        rideSystem.loadRidesFromCSV("Phase 1/rides_40.csv");
+        rideSystem.loadRidersFromCSV("Phase 2/riders_100.csv");
+        rideSystem.loadDriversFromCSV("Phase 2/drivers_30.csv");
+        rideSystem.loadRidesFromCSV("Phase 2/rides_40.csv");
 
         String option;
         do {
@@ -31,7 +31,7 @@ public class Main {
                     break;
 
                 case "4":
-                    
+
                     break;
 
                 case "5":
@@ -117,17 +117,18 @@ public class Main {
 
     private static void printMenu() {
         System.out.println("1. List all riders");
-        System.out.println("2. Search for a rider by ID");
+        System.out.println("2. Search for a rider by ID (with number of key comparisons)");
         System.out.println("3. Search for riders by home city");
-        System.out.println("4. ");
-        System.out.println("5. List all drivers");
-        System.out.println("6. Search for drivers by vehicle type");
+        System.out.println("4. List all rides alphabetically by pickup location");
+        System.out.println("5. Show the schedule of rider or driver");
+        System.out.println("6. Show indexes statistics");
         System.out.println("7. Add a rider");
-        System.out.println("8. List all rides alphabetically by pickup location.");
-        System.out.println("9. Search for rides by pickup location.");
-        System.out.println("10. Search for rides by rider name.");
-        System.out.println("11. List the participants of a shared ride by pickup location.");
-        System.out.println("12. Add a ride");
+        System.out.println("8. List all rides within a pickup time range");
+        System.out.println("9. List available drivers of a given vehicle type for a given time slot");
+        System.out.println("10. Add a ride");
+        System.out.println("11. Cancel a ride");
+        System.out.println("12. Remove a rider");
+        System.out.println("0. Exit");
     }
 
     private static void printRiders() {
@@ -250,7 +251,7 @@ public class Main {
             int[] ridersIds = new int[nriders];
 
             for (int i = 0; i < nriders; i++) {
-                System.out.print("Enter ID for Rider " + (1+i) + ": ");
+                System.out.print("Enter ID for Rider " + (1 + i) + ": ");
                 ridersIds[i] = takeIntInput();
             }
 
