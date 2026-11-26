@@ -22,18 +22,16 @@ public class Main {
                     break;
 
                 case "2":
+                    searchRidersById();
+                    break;
+
+                case "3":
                     // Search for riders by home city
                     searchRidersByHomeCity();
                     break;
 
-                case "3":
-                    // Search for riders by name
-                    searchRidersByName();
-                    break;
-
                 case "4":
-                    // Add a rider
-                    addRider();
+                    
                     break;
 
                 case "5":
@@ -46,8 +44,8 @@ public class Main {
                     searchDriversByVehicleType();
                     break;
                 case "7":
-                    // Add a driver
-                    addDriver();
+                    // Add a rider
+                    addRider();
                     break;
                 case "8":
                     // List all rides alphabetically by pickup location.
@@ -119,12 +117,12 @@ public class Main {
 
     private static void printMenu() {
         System.out.println("1. List all riders");
-        System.out.println("2. Search for riders by home city");
-        System.out.println("3. Search for riders by name");
-        System.out.println("4. Add a rider");
+        System.out.println("2. Search for a rider by ID");
+        System.out.println("3. Search for riders by home city");
+        System.out.println("4. ");
         System.out.println("5. List all drivers");
         System.out.println("6. Search for drivers by vehicle type");
-        System.out.println("7. Add a driver");
+        System.out.println("7. Add a rider");
         System.out.println("8. List all rides alphabetically by pickup location.");
         System.out.println("9. Search for rides by pickup location.");
         System.out.println("10. Search for rides by rider name.");
@@ -176,7 +174,7 @@ public class Main {
         System.out.print("Enter Home City: ");
         String RiderHomeCity = input.nextLine();
         try {
-            IRider newRider = new Rider(id, RiderName, phoneNumber, email, RiderHomeCity);
+            IRider newRider = new Rider(id, RiderName, email, phoneNumber, RiderHomeCity);
             if (rideSystem.addRider(newRider)) {
                 System.out.println("Rider added successfully.");
             } else {
@@ -187,20 +185,16 @@ public class Main {
         }
     }
 
-    private static void searchRidersByName() {
-        System.out.println("Enter Name: ");
-        String name = input.nextLine();
-        LinkedList<IRider> foundRiderName = rideSystem.searchRidersByName(name);
-        if (foundRiderName.empty()) {
-            System.out.println("There is no riders.");
+    private static void searchRidersById() {
+        System.out.println("Enter Rider ID: ");
+        int id = takeIntInput();
+        IRider foundRider = rideSystem.searchRiderById(id);
+        if (foundRider == null) {
+            System.out.println("There is no rider with the given ID.");
         } else {
-            foundRiderName.findFirst();
-            while (!foundRiderName.last()) {
-                System.out.println(foundRiderName.retrieve().toString());
-                foundRiderName.findNext();
-            }
-            System.out.println(foundRiderName.retrieve().toString());
+            System.out.println(foundRider.toString());
         }
+        System.out.println("Number of key comparisons: " + rideSystem.nbKeyCompRiderById(id));
     }
 
     private static void addRide() {
