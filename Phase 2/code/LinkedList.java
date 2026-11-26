@@ -90,6 +90,25 @@ public class LinkedList<T> {
         }
     }
 
+    public void insertLinkedListAtEnd(LinkedList<T> other) {
+
+        if (other == null || other == this || other.empty()) {
+            return;
+        }
+
+        if (this.empty()) {
+            head = other.head;
+            tail = other.tail;
+            current = head;
+            return;
+        }
+
+        tail.next = other.head;
+        tail = other.tail;
+
+
+    }
+
     public int size() {
         int count = 0;
         Node<T> tmp = head;
