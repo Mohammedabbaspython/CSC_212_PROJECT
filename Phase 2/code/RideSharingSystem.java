@@ -511,48 +511,18 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public LinkedList<IRider> getSharedRideParticipants(int rideId) {
-        LinkedList<IRide> frides = searchRidesByPickupLocation(pickupLocation);
-
-        LinkedList<IRider> tmpRiders = new LinkedList<IRider>();
-        IRiderList result = new RiderList();
-
-        IRide ride;
-
-        if (frides.empty()) {
-            return result.getAll();
+        LinkedList<IRider> riders = new LinkedList<IRider>();
+        if (!ridesByID.findKey(rideId)) {
+            return riders;
         }
 
-        frides.findFirst();
-
-        while (!frides.last()) {
-            ride = frides.retrieve();
-            if (ride instanceof SharedRide) {
-                tmpRiders = ((SharedRide) ride).getParticipants();
-
-                tmpRiders.findFirst();
-                while (!tmpRiders.last()) {
-                    result.add(tmpRiders.retrieve());
-                    tmpRiders.findNext();
-                }
-                result.add(tmpRiders.retrieve());
-            }
-            frides.findNext();
-        }
-
-        ride = frides.retrieve();
+        IRide ride = ridesByID.retrieve();
 
         if (ride instanceof SharedRide) {
-            tmpRiders = ((SharedRide) ride).getParticipants();
-
-            tmpRiders.findFirst();
-            while (!tmpRiders.last()) {
-                result.add(tmpRiders.retrieve());
-                tmpRiders.findNext();
-            }
-            result.add(tmpRiders.retrieve());
+            riders = ((ISharedRide) ride).getParticipants();
         }
 
-        return result.getAll();
+        return riders;
     }
 
     @Override
@@ -577,8 +547,26 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public LinkedList<IRide> searchRidesByPickupTimeRange(IDateTime from, IDateTime to) {
-        // TODO Auto-generated method stub
-        return null;
+        LinkedList<IRide> rides = new LinkedList<IRide>();
+
+        if (from == null || to == null) {
+            return rides;
+        }
+        
+        LinkedList<IBST<Integer, IRide>> rideBSTs = ridesByPickupTimeIndex.rangeSearch(from, to);
+
+        if (rideBSTs.empty()) {
+            return rides;
+        }
+
+        rideBSTs.findFirst();
+        while (!rideBSTs.last()) {
+            rides.insertLinkedListAtEnd(rideBSTs.retrieve().inOrder());
+            rideBSTs.findNext();
+        }
+        rides.insertLinkedListAtEnd(rideBSTs.retrieve().inOrder());
+
+        return rides;
     }
 
     @Override
