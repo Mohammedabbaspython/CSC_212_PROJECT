@@ -7,9 +7,27 @@ public class Main {
 
     public static void main(String args[]) {
         // loading
-        rideSystem.loadRidersFromCSV("Phase 2/riders_100.csv");
-        rideSystem.loadDriversFromCSV("Phase 2/drivers_30.csv");
-        rideSystem.loadRidesFromCSV("Phase 2/rides_40.csv");
+        int nrr = rideSystem.loadRidersFromCSV("Phase 2/riders_100.csv");
+        int nd = rideSystem.loadDriversFromCSV("Phase 2/drivers_30.csv");
+        int nr = rideSystem.loadRidesFromCSV("Phase 2/rides_40.csv");
+
+        if (nrr == -1) {
+            System.out.println("loading riders failed");
+        } else {
+            System.out.println(nrr + " riders were loaded.");
+        }
+
+        if (nd == -1) {
+            System.out.println("loading drivers failed");
+        } else {
+            System.out.println(nd + " drivers were loaded.");
+        }
+
+        if (nr == -1) {
+            System.out.println("loading rides failed");
+        } else {
+            System.out.println(nr + " rides were loaded.");
+        }
 
         String option;
         do {
@@ -31,7 +49,8 @@ public class Main {
                     break;
 
                 case "4":
-
+                    // List all rides alphabetically by pickup location
+                    printRides(rideSystem.getAllRidesAlphabetically());
                     break;
 
                 case "5":
@@ -48,27 +67,23 @@ public class Main {
                     addRider();
                     break;
                 case "8":
-                    // List all rides alphabetically by pickup location.
-                    printRides(rideSystem.getAllRidesAlphabetically());
+                    // List all rides within a pickup time range
+                    ridesWithinRange();
                     break;
                 case "9":
-                    // Search for rides by pickup location.
-                    System.out.print("Enter pickup location: ");
-                    printRides(rideSystem.searchRidesByPickupLocation(input.nextLine()));
+
                     break;
                 case "10":
-                    // Search for rides by rider name.
-                    System.out.print("Enter Rider Name: ");
-                    printRides(rideSystem.searchRidesByRiderName(input.nextLine()));
-                    break;
-                case "11":
-                    // List the participants of a shared ride by pickup location.
-                    System.out.print("Enter pickup location: ");
-                    printSharedRidesParticipants(rideSystem.getSharedRideParticipants(input.nextLine()));
-                    break;
-                case "12":
                     // Add a ride
                     addRide();
+                    break;
+                case "11":
+                    // cancel a ride
+                    cancelRide();
+                    break;
+                case "12":
+                    // remove Rider
+                    removeRider();
                     break;
                 case "0":
                     System.out.println("Exiting the program....");
@@ -97,22 +112,6 @@ public class Main {
         }
 
         System.out.println(allRides.retrieve());
-    }
-
-    private static void printSharedRidesParticipants(LinkedList<IRider> riders) {
-        if (riders.empty()) {
-            System.out.println("No Shared rides participants found.");
-            return;
-        }
-
-        riders.findFirst();
-
-        while (!riders.last()) {
-            System.out.println(riders.retrieve());
-            riders.findNext();
-        }
-
-        System.out.println(riders.retrieve());
     }
 
     private static void printMenu() {
@@ -200,7 +199,7 @@ public class Main {
 
     private static void addRide() {
         // success
-        boolean success = false;
+        int rideId;
 
         // ride type
         System.out.println("Ride types:\n1-Private Ride\n2-Shared Ride.");
@@ -209,6 +208,7 @@ public class Main {
         // pickup/dropoff datetime
         IDateTime pickupDateTime;
         IDateTime dropoffDateTime;
+        ITimeSlot timeSlot;
 
         while (true) {
             try {
@@ -218,9 +218,11 @@ public class Main {
                 System.out.println("Enter dropoff time (the format is MM/DD/YYYY HH:MM): ");
                 dropoffDateTime = new DateTime(input.nextLine());
 
+                timeSlot = new TimeSlot(pickupDateTime, dropoffDateTime);
+
                 break;
             } catch (IllegalArgumentException e) {
-                System.out.println("invalid date time format try again");
+                System.out.println("invalid date time format OR invalid timeslot try again");
                 continue;
             }
         }
@@ -242,12 +244,18 @@ public class Main {
             int riderId = takeIntInput();
 
             // schedule private ride
-            success = rideSystem.schedulePrivateRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation,
-                    riderId, driverId);
+            rideId = rideSystem.schedulePrivateRide(pickupLocation, dropoffLocation, timeSlot, riderId, driverId);
         } else {
             // riders ids
             System.out.println("Enter the number of riders: ");
+
             int nriders = takePositiveIntInput();
+
+            while (nriders < 2) {
+                System.out.println("Share Ride must have at least 2 riders");
+                nriders = takePositiveIntInput();
+            }
+
             int[] ridersIds = new int[nriders];
 
             for (int i = 0; i < nriders; i++) {
@@ -255,12 +263,11 @@ public class Main {
                 ridersIds[i] = takeIntInput();
             }
 
-            success = rideSystem.scheduleSharedRide(pickupLocation, pickupDateTime, dropoffDateTime, dropoffLocation,
-                    ridersIds, driverId);
+            rideId = rideSystem.scheduleSharedRide(pickupLocation, dropoffLocation, timeSlot, ridersIds, driverId);
         }
 
-        if (success) {
-            System.out.println("Ride Scheduled Successfully!");
+        if (rideId != -1) {
+            System.out.println("Ride Scheduled Successfully!\nRide id is " + rideId);
         } else {
             System.out.println("Ride Scheduling Failed!");
         }
@@ -365,4 +372,49 @@ public class Main {
         }
     }
 
+    private static void cancelRide() {
+        System.out.println("Enter Ride ID: ");
+        int id = takeIntInput();
+
+        if (rideSystem.cancelRide(id)) {
+            System.out.println("Ride canceled successfully.");
+        } else {
+            System.out.println("Failed");
+        }
+
+    }
+
+    private static void removeRider() {
+        System.out.println("Enter Rider ID: ");
+        int id = takeIntInput();
+
+        if (rideSystem.removeRider(id)) {
+            System.out.println("Rider removed successfully.");
+        } else {
+            System.out.println("Failed");
+        }
+    }
+
+    private static void ridesWithinRange() {
+        // pickup/dropoff datetime
+        IDateTime from;
+        IDateTime to;
+
+        while (true) {
+            try {
+                System.out.println("Enter start of pickup time range (the format is MM/DD/YYYY HH:MM): ");
+                from = new DateTime(input.nextLine());
+
+                System.out.println("Enter end of pickup time range (the format is MM/DD/YYYY HH:MM): ");
+                to = new DateTime(input.nextLine());
+
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("invalid date time format try again");
+                continue;
+            }
+        }
+
+        printRides(rideSystem.searchRidesByPickupTimeRange(from, to));
+    }
 }
