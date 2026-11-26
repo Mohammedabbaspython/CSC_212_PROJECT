@@ -209,8 +209,8 @@ public class RideSharingSystem implements IRideSharingSystem {
             return false ;
         }
         ridersByID.insert(rider.getId(), rider);
-        ridersByName.add(rider.getName(), rider.getID() , rider) ;
-        ridersByCity.add(rider.getHomeCity(), rider.getID() , rider) ;
+        ridersByName.add(rider.getName(), rider.getId() , rider) ;
+        ridersByCity.add(rider.getHomeCity(), rider.getId() , rider) ;
         return true ;
     }
 
