@@ -202,28 +202,50 @@ public class RideSharingSystem implements IRideSharingSystem {
     // Rider methods
     @Override
     public boolean addRider(IRider rider) {
-        return riders.add(rider);
+        if(rider == null){
+            return false ;
+        }
+        if(ridersByID.findKey(rider.getId())){
+            return false ;
+        }
+        ridersByID.insert(rider.getId(), rider);
+        ridersByName.add(rider.getName(), rider.getID() , rider) ;
+        ridersByCity.add(rider.getHomeCity(), rider.getID() , rider) ;
+        return true ;
     }
 
     @Override
     public IRider searchRiderById(int riderId) {
-        return riders.findById(riderId);
+        if(ridersByID.findKey(riderId)){
+            return ridersByID.retrieve() ;
+        }
+        return null ;
     }
 
     @Override
     public LinkedList<IRider> searchRidersByName(String fullName) {
-        return riders.findByName(fullName);
+        IBST<Integer, IRider> inner = ridersByName.get(fullName);
+        if(inner == null){
+            return new LinkedList<IRider>() ;
+        }
+            return inner.inOrder();
+        
     }
 
     @Override
     public LinkedList<IRider> searchRidersByHomeCity(String homeCity) {
-        return riders.findByHomeCity(homeCity);
+        IBST<Integer, IRider> inner = ridersByCity.get(homeCity);
+        if(inner == null){
+            return new LinkedList<IRider>() ;
+        }
+            return inner.inOrder();
     }
 
     @Override
     public LinkedList<IRider> getAllRiders() {
-        return riders.getAll();
+        return ridersByID.inOrder();
     }
+
 
     @Override
     public boolean removeRider(int riderId) {
@@ -554,8 +576,7 @@ public class RideSharingSystem implements IRideSharingSystem {
     // tree statistics
     @Override
     public int nbKeyCompRiderById(int riderId) {
-        // TODO Auto-generated method stub
-        return 0;
+        return ridersByID.nbKeyComp(riderId);
     }
 
     @Override
