@@ -202,50 +202,49 @@ public class RideSharingSystem implements IRideSharingSystem {
     // Rider methods
     @Override
     public boolean addRider(IRider rider) {
-        if(rider == null){
-            return false ;
+        if (rider == null) {
+            return false;
         }
-        if(ridersByID.findKey(rider.getId())){
-            return false ;
+        if (ridersByID.findKey(rider.getId())) {
+            return false;
         }
         ridersByID.insert(rider.getId(), rider);
-        ridersByName.add(rider.getName(), rider.getId() , rider) ;
-        ridersByCity.add(rider.getHomeCity(), rider.getId() , rider) ;
-        return true ;
+        ridersByName.add(rider.getName(), rider.getId(), rider);
+        ridersByCity.add(rider.getHomeCity(), rider.getId(), rider);
+        return true;
     }
 
     @Override
     public IRider searchRiderById(int riderId) {
-        if(ridersByID.findKey(riderId)){
-            return ridersByID.retrieve() ;
+        if (ridersByID.findKey(riderId)) {
+            return ridersByID.retrieve();
         }
-        return null ;
+        return null;
     }
 
     @Override
     public LinkedList<IRider> searchRidersByName(String fullName) {
         IBST<Integer, IRider> inner = ridersByName.get(fullName);
-        if(inner == null){
-            return new LinkedList<IRider>() ;
+        if (inner == null) {
+            return new LinkedList<IRider>();
         }
-            return inner.inOrder();
-        
+        return inner.inOrder();
+
     }
 
     @Override
     public LinkedList<IRider> searchRidersByHomeCity(String homeCity) {
         IBST<Integer, IRider> inner = ridersByCity.get(homeCity);
-        if(inner == null){
-            return new LinkedList<IRider>() ;
+        if (inner == null) {
+            return new LinkedList<IRider>();
         }
-            return inner.inOrder();
+        return inner.inOrder();
     }
 
     @Override
     public LinkedList<IRider> getAllRiders() {
         return ridersByID.inOrder();
     }
-
 
     @Override
     public boolean removeRider(int riderId) {
@@ -466,10 +465,10 @@ public class RideSharingSystem implements IRideSharingSystem {
         IBST<Integer, IRide> rides = new BST<Integer, IRide>();
 
         IBST<Integer, IRider> ridersBST = ridersByName.get(riderName);
-        
+
         if (ridersBST == null) {
             return rides.inOrder();
-        } 
+        }
 
         LinkedList<IRider> riders = ridersBST.inOrder();
         LinkedList<IRide> riderSchedule;
@@ -558,7 +557,22 @@ public class RideSharingSystem implements IRideSharingSystem {
 
     @Override
     public LinkedList<IRide> getAllRidesAlphabetically() {
-        return rides.getAllAlphabetically();
+        LinkedList<IRide> rides = new LinkedList<IRide>();
+
+        LinkedList<IBST<Integer, IRide>> bsts = ridesByPickupLocationIndex.inOrder();
+
+        if (bsts.empty()) {
+            return rides;
+        }
+
+        bsts.findFirst();
+        while (!bsts.last()) {
+            rides.insertLinkedListAtEnd(bsts.retrieve().inOrder());
+            bsts.findNext();
+        }
+        rides.insertLinkedListAtEnd(bsts.retrieve().inOrder());
+
+        return rides;
     }
 
     @Override
