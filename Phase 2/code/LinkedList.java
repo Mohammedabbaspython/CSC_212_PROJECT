@@ -35,7 +35,7 @@ public class LinkedList<T> {
 
     public T retrieve() {
         if (empty()) {
-            return  null;
+            return null;
         }
         return current.data;
     }
@@ -88,6 +88,23 @@ public class LinkedList<T> {
         } else {
             current = current.next;
         }
+    }
+
+    public void insertLinkedListAtEnd(LinkedList<T> other) {
+
+        if (other == null || other == this || other.empty()) {
+            return;
+        }
+
+        if (this.empty()) {
+            head = other.head;
+            tail = other.tail;
+            current = head;
+            return;
+        }
+
+        tail.next = other.head;
+        tail = other.tail;
     }
 
     public int size() {
