@@ -35,7 +35,7 @@ public class LinkedList<T> {
 
     public T retrieve() {
         if (empty()) {
-            return  null;
+            return null;
         }
         return current.data;
     }
@@ -105,8 +105,6 @@ public class LinkedList<T> {
 
         tail.next = other.head;
         tail = other.tail;
-
-
     }
 
     public int size() {
